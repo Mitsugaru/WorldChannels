@@ -83,10 +83,15 @@ public class ChatListener implements Listener
 				event.getRecipients().clear();
 				// Add our receivers
 				event.getRecipients().addAll(receivers);
-				// Check if we are going to edit the format at all
+				//Set info of fields for formatting message and format
 				final EnumMap<Field, String> info = new EnumMap<Field, String>(
 						Field.class);
-
+				info.put(WChat.Field.NAME, event.getPlayer().getName());
+				info.put(WChat.Field.WORLD, worldName);
+				info.put(Field.PREFIX, WorldChannels.chat.getPlayerPrefix(worldName, event.getPlayer().getName()));
+				info.put(Field.SUFFIX, WorldChannels.chat.getPlayerSuffix(worldName, event.getPlayer().getName()));
+				info.put(Field.MESSAGE, event.getMessage());
+				// Check if we are going to edit the format at all
 				if (config.useFormatter())
 				{
 					final String format = config.getFormat();
@@ -94,17 +99,32 @@ public class ChatListener implements Listener
 					{
 						event.setFormat(WChat.parseString(format, info));
 					}
-					// Edit this to change the format: world playername
-					// prefix/suffix
-					// etc
-					plugin.getLogger().info("Format: " + event.getFormat());
 				}
 				else if(configHandler.useFormatter())
 				{
-					
+					final String format = configHandler.getFormat();
+					if(!format.equals(""))
+					{
+						event.setFormat(WChat.parseString(format, info));
+					}
 				}
-				// Edit this to change the message
-				plugin.getLogger().info("Message: " + event.getMessage());
+				//Check if we are going to edit the message
+				if(config.useMessageFormatter())
+				{
+					final String messageFormat = config.getMessageFormat();
+					if(!messageFormat.equals(""))
+					{
+						event.setMessage(WChat.parseString(messageFormat, info));
+					}
+				}
+				else if(configHandler.useMessageFormatter())
+				{
+					final String messageFormat = configHandler.getMessageFormat();
+					if(!messageFormat.equals(""))
+					{
+						event.setMessage(WChat.parseString(messageFormat, info));
+					}
+				}
 			}
 		}
 	}

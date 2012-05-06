@@ -8,6 +8,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
+import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 import com.mitsugaru.WorldChannels.events.ChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
@@ -24,37 +25,42 @@ public class WorldChannels extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
-		//Initialize configs
+		// Initialize configs
 		configHandler = new ConfigHandler(this);
+		LocalizeConfig.init(this);
+		// Grab Chat class from Vault
 		RegisteredServiceProvider<Chat> chatProvider = this.getServer()
 				.getServicesManager().getRegistration(Chat.class);
 		if (chatProvider != null)
 		{
 			chat = chatProvider.getProvider();
+			// Setup permissions
+			perm = new PermCheck(this);
+			// Setup commander
+			getCommand("wc").setExecutor(new Commander(this));
+			// Setup listeners
+			final PluginManager pm = this.getServer().getPluginManager();
+			pm.registerEvents(new ChatListener(this), this);
 		}
 		else
 		{
-			//They don't have vault (or an outdated version)
-			//TODO disable
-			this.getLogger().warning("Vault's Chat class not found! Disabling...");
+			// They don't have vault (or have an outdated version)
+			this.getLogger().warning(
+					"Vault's Chat class not found! Disabling...");
+			this.getServer().getPluginManager().disablePlugin(this);
 		}
-		// Setup permissions
-		perm = new PermCheck(this);
-		// Setup listeners
-		final PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvents(new ChatListener(this), this);
 	}
-	
+
 	public ConfigHandler getConfigHandler()
 	{
 		return configHandler;
 	}
-	
+
 	public PermCheck getPermissionsHandler()
 	{
 		return perm;
 	}
-	
+
 	/**
 	 * Colorizes a given string to Bukkit standards
 	 * 

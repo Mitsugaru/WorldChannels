@@ -109,6 +109,7 @@ public class LocalizeConfig
 		// load variables
 		/**
 		 * Messages
+		 */
 		permissionDeny = config.getString("message.noPermission",
 				"&c%tag Lack permission: %extra");
 		reloadConfig = config.getString("message.reloadConfig",

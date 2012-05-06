@@ -55,6 +55,7 @@ public class Commander implements CommandExecutor
 				if (perm.checkPermission(sender, Permission.ADMIN.getNode()))
 				{
 					configHandler.reloadConfigs();
+					//TODO message out
 				}
 			}
 		}
