@@ -3,7 +3,9 @@ package com.mitsugaru.WorldChannels.config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,23 +17,25 @@ import com.mitsugaru.WorldChannels.WorldChannels;
 public class Config
 {
 	private String worldName;
-	private static WorldChannels plugin;
-	private static File file;
-	private static YamlConfiguration config;
+	private WorldChannels plugin;
+	private File file;
+	private YamlConfiguration config;
+	private boolean formatterUse, formatterMessageUse, includeLocal;
+	private String formatterString, formatterMessage;
 
-	public Config(WorldChannels wc, String worldName)
+	public Config(WorldChannels plugin, String worldName)
 	{
-		plugin = wc;
+		this.plugin = plugin;
 		this.worldName = worldName;
 		// Grab file
-		file = new File(plugin.getDataFolder().getAbsolutePath() + "/worlds/"
-				+ worldName + ".yml");
-		config = YamlConfiguration.loadConfiguration(file);
+		this.file = new File(plugin.getDataFolder().getAbsolutePath()
+				+ "/worlds/" + worldName + ".yml");
+		this.config = YamlConfiguration.loadConfiguration(file);
 		loadDefaults();
 		loadVariables();
 	}
 
-	public static void save()
+	public void save()
 	{
 		// Set config
 		try
@@ -47,7 +51,7 @@ public class Config
 		}
 	}
 
-	public static void reload()
+	public void reload()
 	{
 		try
 		{
@@ -69,13 +73,17 @@ public class Config
 		loadVariables();
 	}
 
-	private static void loadDefaults()
+	private void loadDefaults()
 	{
 		// LinkedHashmap of defaults
 		final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 		// TODO defaults
-		defaults.put("formatter.use", false);
-		defaults.put("formatter.format", "");
+		defaults.put("formatter.format.use", false);
+		defaults.put("formatter.format.form", "%world %group %prefix%name%suffix");
+		defaults.put("formatter.message.use", false);
+		defaults.put("formatter.message.form", "%message");
+		defaults.put("includeLocalPlayers", true);
+		defaults.put("worlds", new ArrayList<String>());
 		// Add to config if missing
 		for (final Entry<String, Object> e : defaults.entrySet())
 		{
@@ -87,13 +95,53 @@ public class Config
 		save();
 	}
 
-	private static void loadVariables()
+	private void loadVariables()
 	{
 		// load variables
+		formatterUse = config.getBoolean("formatter.use", false);
+		formatterString = config.getString("formatter.format",
+				"%world %group %prefix%name%suffix");
+		formatterMessage = config.getString("formatter.message", "%message");
+		includeLocal = config.getBoolean("includeLocalPlayers", true);
 	}
-	
+
+	public List<String> getWorldList()
+	{
+		List<String> listeners = config.getStringList("worlds");
+		if (listeners == null)
+		{
+			listeners = new ArrayList<String>();
+		}
+		return listeners;
+	}
+
 	public String getWorldName()
 	{
 		return worldName;
+	}
+
+	public boolean useFormatter()
+	{
+		return formatterUse;
+	}
+	
+	public boolean useMessageFormatter()
+	{
+		return formatterMessageUse;
+	}
+	
+	public String getFormat()
+	{
+		return formatterString;
+	}
+	
+	public String getMessageFormat()
+	{
+		return formatterMessage;
+	}
+	
+	public boolean includeLocalPlayers()
+	{
+		return includeLocal;
 	}
 }

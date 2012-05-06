@@ -8,13 +8,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.events.ChatListener;
-import com.mitsugaru.WorldChannels.events.PlayerListener;
+import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
 public class WorldChannels extends JavaPlugin
 {
 	public static Chat chat;
 	public static String TAG = "[WorldChannels]";
 	private ConfigHandler configHandler;
+	private PermCheck perm;
 
 	/**
 	 * Method that is called when plugin is enabled
@@ -36,9 +37,20 @@ public class WorldChannels extends JavaPlugin
 			//TODO disable
 			this.getLogger().warning("Vault's Chat class not found! Disabling...");
 		}
+		// Setup permissions
+		perm = new PermCheck(this);
 		// Setup listeners
 		final PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvents(new PlayerListener(this), this);
 		pm.registerEvents(new ChatListener(this), this);
+	}
+	
+	public ConfigHandler getConfigHandler()
+	{
+		return configHandler;
+	}
+	
+	public PermCheck getPermissionsHandler()
+	{
+		return perm;
 	}
 }
