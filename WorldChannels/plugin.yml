@@ -10,6 +10,9 @@ commands:
     description: Root command
 
 permissions:
+  WorldChannels.colorize:
+    description: Can use chat colors.
+    default: op
   WorldChannels.admin:
     description: Administrate plugin
     default: op

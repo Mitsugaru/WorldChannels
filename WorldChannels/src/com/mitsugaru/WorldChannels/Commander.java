@@ -1,5 +1,7 @@
 package com.mitsugaru.WorldChannels;
 
+import java.util.EnumMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,6 +42,9 @@ public class Commander implements CommandExecutor
 		}
 		else
 		{
+			final EnumMap<LocalString.Flag, String> info = new EnumMap<LocalString.Flag, String>(
+					LocalString.Flag.class);
+			info.put(LocalString.Flag.TAG, WorldChannels.TAG);
 			final String com = args[0].toLowerCase();
 			if (com.equals("version") || com.equals("ver"))
 			{
@@ -55,8 +60,18 @@ public class Commander implements CommandExecutor
 				if (perm.checkPermission(sender, Permission.ADMIN.getNode()))
 				{
 					configHandler.reloadConfigs();
-					//TODO message out
+					sender.sendMessage(LocalString.RELOAD_CONFIG.parseString(info));
 				}
+				else
+				{
+					info.put(LocalString.Flag.EXTRA, Permission.ADMIN.getNode());
+					sender.sendMessage(LocalString.PERMISSION_DENY.parseString(info));
+				}
+			}
+			else
+			{
+				info.put(LocalString.Flag.EXTRA, com);
+				sender.sendMessage(LocalString.UNKNOWN_COMMAND.parseString(info));
 			}
 		}
 		if (configHandler.debugTime)

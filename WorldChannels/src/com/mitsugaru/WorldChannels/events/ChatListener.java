@@ -15,6 +15,7 @@ import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.WorldChannels;
 import com.mitsugaru.WorldChannels.config.Config;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
+import com.mitsugaru.WorldChannels.permissions.Permission;
 
 public class ChatListener implements Listener
 {
@@ -118,6 +119,11 @@ public class ChatListener implements Listener
 					{
 						event.setFormat(WChat.parseString(format, info));
 					}
+				}
+				// Check if we colorize their chat
+				if(plugin.getPermissionsHandler().checkPermission(event.getPlayer(), Permission.COLORIZE.getNode()))
+				{
+					event.setMessage(WorldChannels.colorizeText(event.getMessage()));
 				}
 			}
 		}

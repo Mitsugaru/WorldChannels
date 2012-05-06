@@ -2,7 +2,7 @@ package com.mitsugaru.WorldChannels.permissions;
 
 public enum Permission
 {
-	ADMIN(".admin");
+	ADMIN(".admin"), COLORIZE(".colorize");
 	private static final String prefix = "WorldChannels";
 	private String node;
 
