@@ -1,5 +1,6 @@
 package com.mitsugaru.WorldChannels.events;
 
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,16 +10,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
 
+import com.mitsugaru.WorldChannels.WChat;
+import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.WorldChannels;
 import com.mitsugaru.WorldChannels.config.Config;
+import com.mitsugaru.WorldChannels.config.ConfigHandler;
 
 public class ChatListener implements Listener
 {
 	private WorldChannels plugin;
+	private ConfigHandler configHandler;
 
 	public ChatListener(WorldChannels plugin)
 	{
 		this.plugin = plugin;
+		this.configHandler = plugin.getConfigHandler();
 	}
 
 	/**
@@ -77,15 +83,26 @@ public class ChatListener implements Listener
 				event.getRecipients().clear();
 				// Add our receivers
 				event.getRecipients().addAll(receivers);
-				//Check if we are going to edit the format at all
+				// Check if we are going to edit the format at all
+				final EnumMap<Field, String> info = new EnumMap<Field, String>(
+						Field.class);
+
 				if (config.useFormatter())
 				{
+					final String format = config.getFormat();
+					if (!format.equals(""))
+					{
+						event.setFormat(WChat.parseString(format, info));
+					}
 					// Edit this to change the format: world playername
 					// prefix/suffix
 					// etc
 					plugin.getLogger().info("Format: " + event.getFormat());
 				}
-				
+				else if(configHandler.useFormatter())
+				{
+					
+				}
 				// Edit this to change the message
 				plugin.getLogger().info("Message: " + event.getMessage());
 			}

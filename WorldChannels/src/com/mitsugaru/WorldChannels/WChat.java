@@ -12,47 +12,47 @@ public class WChat
 		this.string = s;
 	}
 	
-	public static String parseString(String s, EnumMap<Flag, String> replace)
+	public static String parseString(String s, EnumMap<Field, String> replace)
 	{
 		String out = WorldChannels.colorizeText(s);
 		if (replace != null)
 		{
-			for (Entry<Flag, String> entry : replace.entrySet())
+			for (Entry<Field, String> entry : replace.entrySet())
 			{
-				out = out.replaceAll(entry.getKey().getFlag(), entry.getValue());
+				out = out.replaceAll(entry.getKey().getField(), entry.getValue());
 			}
 		}
 		return out;
 	}
 
-	public String parseString(EnumMap<Flag, String> replace)
+	public String parseString(EnumMap<Field, String> replace)
 	{
 		String out = WorldChannels.colorizeText(string);
 		if (replace != null)
 		{
-			for (Entry<Flag, String> entry : replace.entrySet())
+			for (Entry<Field, String> entry : replace.entrySet())
 			{
-				out = out.replaceAll(entry.getKey().getFlag(), entry.getValue());
+				out = out.replaceAll(entry.getKey().getField(), entry.getValue());
 			}
 		}
 		return out;
 	}
 
-	public enum Flag
+	public enum Field
 	{
 		NAME("%name"), WORLD("%world"), PREFIX("%prefix"), SUFFIX("%suffix"), MESSAGE(
 				"%message");
 
-		private String flag;
+		private String field;
 
-		private Flag(String flag)
+		private Field(String field)
 		{
-			this.flag = flag;
+			this.field = field;
 		}
 
-		public String getFlag()
+		public String getField()
 		{
-			return flag;
+			return field;
 		}
 	}
 }

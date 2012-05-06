@@ -18,6 +18,8 @@ public class ConfigHandler
 {
 	private WorldChannels plugin;
 	private Map<String, Config> configs = new HashMap<String, Config>();
+	private String formatterString, formatterMessage;
+	private boolean formatterUse, formatterMessageUse;
 	public boolean debugTime;
 
 	public ConfigHandler(WorldChannels plugin)
@@ -102,5 +104,25 @@ public class ConfigHandler
 			}
 		}
 		return listeners;
+	}
+	
+	public boolean useFormatter()
+	{
+		return formatterUse;
+	}
+	
+	public boolean useMessageFormatter()
+	{
+		return formatterMessageUse;
+	}
+	
+	public String getFormat()
+	{
+		return formatterString;
+	}
+	
+	public String getMessageFormat()
+	{
+		return formatterMessage;
 	}
 }
