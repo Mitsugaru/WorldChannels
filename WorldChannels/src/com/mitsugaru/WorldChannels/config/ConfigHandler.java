@@ -31,7 +31,7 @@ public class ConfigHandler
 		final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 		defaults.put("formatter.use", true);
 		defaults.put("formatter.defaultFormat",
-				"%world %group %prefix%name%suffix");
+				"%world %group %prefix%name%suffix: %message");
 		defaults.put("debug.time", false);
 		defaults.put("version", plugin.getDescription().getVersion());
 		// Insert defaults into config file if they're not present
@@ -79,9 +79,9 @@ public class ConfigHandler
 		/**
 		 * Formatter
 		 */
-		formatterUse = config.getBoolean("formatter.format.use", true);
-		formatterString = config.getString("formatter.format.defaultFormat",
-				"%world %group %prefix%name%suffix");
+		formatterUse = config.getBoolean("formatter.use", true);
+		formatterString = config.getString("formatter.defaultFormat",
+				"%world %group %prefix%name%suffix: %message");
 		/**
 		 * Debug
 		 */

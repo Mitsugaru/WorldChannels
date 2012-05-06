@@ -79,7 +79,7 @@ public class Config
 		final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 		// TODO defaults
 		defaults.put("formatter.use", false);
-		defaults.put("formatter.form", "%world %group %prefix%name%suffix");
+		defaults.put("formatter.format", "%world %group %prefix%name%suffix: %message");
 		defaults.put("includeLocalPlayers", true);
 		defaults.put("worlds", new ArrayList<String>());
 		// Add to config if missing
@@ -98,7 +98,7 @@ public class Config
 		// load variables
 		formatterUse = config.getBoolean("formatter.use", false);
 		formatterString = config.getString("formatter.format",
-				"%world %group %prefix%name%suffix");
+				"%world %group %prefix%name%suffix: %message");
 		includeLocal = config.getBoolean("includeLocalPlayers", true);
 	}
 
