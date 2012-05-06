@@ -18,6 +18,7 @@ public class ConfigHandler
 {
 	private WorldChannels plugin;
 	private Map<String, Config> configs = new HashMap<String, Config>();
+	public boolean debugTime;
 
 	public ConfigHandler(WorldChannels plugin)
 	{
@@ -31,6 +32,7 @@ public class ConfigHandler
 				"%world %group %prefix%name%suffix");
 		defaults.put("formatter.message.use", true);
 		defaults.put("formatter.message.defaultMessage", "%message");
+		defaults.put("debug.time", false);
 		defaults.put("version", plugin.getDescription().getVersion());
 		// Insert defaults into config file if they're not present
 		for (final Entry<String, Object> e : defaults.entrySet())
@@ -42,6 +44,8 @@ public class ConfigHandler
 		}
 		// Save config
 		plugin.saveConfig();
+		// Load settings
+		this.loadSettings(config);
 		// Check if worlds folder exists
 		final File file = new File(plugin.getDataFolder().getAbsolutePath()
 				+ "/worlds");
@@ -58,6 +62,21 @@ public class ConfigHandler
 			configs.put(worldName, new Config(plugin, worldName));
 		}
 		plugin.getLogger().info("Configuration loaded");
+	}
+	
+	public void reloadConfigs()
+	{
+		plugin.reloadConfig();
+		for(Config config : configs.values())
+		{
+			config.reload();
+		}
+		this.loadSettings(plugin.getConfig());
+	}
+	
+	private void loadSettings(ConfigurationSection config)
+	{
+		debugTime = config.getBoolean("debug.time", false);
 	}
 	
 	public Config getWorldConfig(String worldName)
