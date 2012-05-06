@@ -81,7 +81,7 @@ public class Config
 		defaults.put("formatter.use", false);
 		defaults.put("formatter.format", "%world %group %prefix%name%suffix: %message");
 		defaults.put("includeLocalPlayers", true);
-		defaults.put("worlds", new ArrayList<String>());
+		defaults.put("broadcastToWorlds", new ArrayList<String>());
 		// Add to config if missing
 		for (final Entry<String, Object> e : defaults.entrySet())
 		{
@@ -104,7 +104,7 @@ public class Config
 
 	public List<String> getWorldList()
 	{
-		List<String> listeners = config.getStringList("worlds");
+		List<String> listeners = config.getStringList("broadcastToWorlds");
 		if (listeners == null)
 		{
 			listeners = new ArrayList<String>();
