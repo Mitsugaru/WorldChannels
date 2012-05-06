@@ -74,21 +74,15 @@ public class LocalizeConfig
 		// LinkedHashmap of defaults
 		final Map<String, String> defaults = new LinkedHashMap<String, String>();
 		// defaults for all strings
-		defaults.put("message.localMessage",
-				"&a%tag Paid &6$%amount&a for &b%event &c%extra");
-		defaults.put("message.econFailure",
-				"&c%tag Could not pay &6%amount &cfor &b%event");
-		defaults.put("message.lackEvent",
-				"&c%tag %reason for action: &b%event &c%extra");
 		defaults.put("message.noPermission", "&c%tag Lack permission: %extra");
 		defaults.put("message.reloadConfig", "&a%tag &fConfig reloaded.");
 		defaults.put("message.unknownCommand",
 				"&c%tag Unknown command '&6%extra&c'. Bad syntax.");
-		defaults.put("help.help", "&a/kcon help&e : Show help menu");
+		defaults.put("help.help", "&a/wc help&e : Show help menu");
 		defaults.put("help.admin.reload",
-				"&a/kcon reload&e : Reload all config files");
+				"&a/wc reload&e : Reload all config files");
 		defaults.put("help.version",
-				"&a/kcon version&e : Show version and config");
+				"&a/wc version&e : Show version and config");
 		defaults.put("reason.limit", "Hit limit");
 		defaults.put("reason.money", "Lack money");
 		defaults.put("reason.unknown", " Unknown DenyType");
@@ -118,10 +112,10 @@ public class LocalizeConfig
 		 * help
 		 */
 		helpHelp = config.getString("help.help",
-				"&a/kcon help&e : Show help menu");
+				"&a/wc help&e : Show help menu");
 		helpAdminReload = config.getString("help.admin.reload",
-				"&a/kcon reload&e : Reload all config files");
+				"&a/wc reload&e : Reload all config files");
 		helpVersion = config.getString("help.version",
-				"&a/kcon version&e : Show version and config");
+				"&a/wc version&e : Show version and config");
 	}
 }

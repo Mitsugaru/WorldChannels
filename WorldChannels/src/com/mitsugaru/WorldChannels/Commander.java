@@ -92,7 +92,7 @@ public class Commander implements CommandExecutor
 	private void displayHelp(CommandSender sender)
 	{
 		sender.sendMessage(ChatColor.BLUE + "==========" + ChatColor.GOLD
-				+ "Karmiconomy" + ChatColor.BLUE + "==========");
+				+ "WorldChannels" + ChatColor.BLUE + "==========");
 		sender.sendMessage(LocalString.HELP_HELP.parseString(null));
 		if (perm.checkPermission(sender, Permission.ADMIN.getNode()))
 		{
