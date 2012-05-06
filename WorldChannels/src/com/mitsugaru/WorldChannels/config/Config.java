@@ -20,8 +20,8 @@ public class Config
 	private WorldChannels plugin;
 	private File file;
 	private YamlConfiguration config;
-	private boolean formatterUse, formatterMessageUse, includeLocal;
-	private String formatterString, formatterMessage;
+	private boolean formatterUse, includeLocal;
+	private String formatterString;
 
 	public Config(WorldChannels plugin, String worldName)
 	{
@@ -78,10 +78,8 @@ public class Config
 		// LinkedHashmap of defaults
 		final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 		// TODO defaults
-		defaults.put("formatter.format.use", false);
-		defaults.put("formatter.format.form", "%world %group %prefix%name%suffix");
-		defaults.put("formatter.message.use", false);
-		defaults.put("formatter.message.form", "%message");
+		defaults.put("formatter.use", false);
+		defaults.put("formatter.form", "%world %group %prefix%name%suffix");
 		defaults.put("includeLocalPlayers", true);
 		defaults.put("worlds", new ArrayList<String>());
 		// Add to config if missing
@@ -101,7 +99,6 @@ public class Config
 		formatterUse = config.getBoolean("formatter.use", false);
 		formatterString = config.getString("formatter.format",
 				"%world %group %prefix%name%suffix");
-		formatterMessage = config.getString("formatter.message", "%message");
 		includeLocal = config.getBoolean("includeLocalPlayers", true);
 	}
 
@@ -125,19 +122,9 @@ public class Config
 		return formatterUse;
 	}
 	
-	public boolean useMessageFormatter()
-	{
-		return formatterMessageUse;
-	}
-	
 	public String getFormat()
 	{
 		return formatterString;
-	}
-	
-	public String getMessageFormat()
-	{
-		return formatterMessage;
 	}
 	
 	public boolean includeLocalPlayers()

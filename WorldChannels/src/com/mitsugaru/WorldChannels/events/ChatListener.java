@@ -83,14 +83,25 @@ public class ChatListener implements Listener
 				event.getRecipients().clear();
 				// Add our receivers
 				event.getRecipients().addAll(receivers);
-				//Set info of fields for formatting message and format
+				// Set info of fields for formatting message and format
 				final EnumMap<Field, String> info = new EnumMap<Field, String>(
 						Field.class);
-				info.put(WChat.Field.NAME, event.getPlayer().getName());
-				info.put(WChat.Field.WORLD, worldName);
-				info.put(Field.PREFIX, WorldChannels.chat.getPlayerPrefix(worldName, event.getPlayer().getName()));
-				info.put(Field.SUFFIX, WorldChannels.chat.getPlayerSuffix(worldName, event.getPlayer().getName()));
-				info.put(Field.MESSAGE, event.getMessage());
+				info.put(Field.NAME, "%1\\$s");
+				info.put(Field.WORLD, worldName);
+				try
+				{
+					info.put(Field.GROUP, WorldChannels.chat
+							.getPlayerGroups(event.getPlayer())[0]);
+				}
+				catch (ArrayIndexOutOfBoundsException a)
+				{
+					// IGNORE
+				}
+				info.put(Field.PREFIX, WorldChannels.chat.getPlayerPrefix(
+						worldName, event.getPlayer().getName()));
+				info.put(Field.SUFFIX, WorldChannels.chat.getPlayerSuffix(
+						worldName, event.getPlayer().getName()));
+				info.put(Field.MESSAGE, "%2\\$s");
 				// Check if we are going to edit the format at all
 				if (config.useFormatter())
 				{
@@ -100,29 +111,12 @@ public class ChatListener implements Listener
 						event.setFormat(WChat.parseString(format, info));
 					}
 				}
-				else if(configHandler.useFormatter())
+				else if (configHandler.useFormatter())
 				{
 					final String format = configHandler.getFormat();
-					if(!format.equals(""))
+					if (!format.equals(""))
 					{
 						event.setFormat(WChat.parseString(format, info));
-					}
-				}
-				//Check if we are going to edit the message
-				if(config.useMessageFormatter())
-				{
-					final String messageFormat = config.getMessageFormat();
-					if(!messageFormat.equals(""))
-					{
-						event.setMessage(WChat.parseString(messageFormat, info));
-					}
-				}
-				else if(configHandler.useMessageFormatter())
-				{
-					final String messageFormat = configHandler.getMessageFormat();
-					if(!messageFormat.equals(""))
-					{
-						event.setMessage(WChat.parseString(messageFormat, info));
 					}
 				}
 			}

@@ -14,7 +14,7 @@ public class WChat
 	
 	public static String parseString(String s, EnumMap<Field, String> replace)
 	{
-		String out = WorldChannels.colorizeText(s);
+		String out = s;
 		if (replace != null)
 		{
 			for (Entry<Field, String> entry : replace.entrySet())
@@ -22,7 +22,7 @@ public class WChat
 				out = out.replaceAll(entry.getKey().getField(), entry.getValue());
 			}
 		}
-		return out;
+		return WorldChannels.colorizeText(out);
 	}
 
 	public String parseString(EnumMap<Field, String> replace)
@@ -41,7 +41,7 @@ public class WChat
 	public enum Field
 	{
 		NAME("%name"), WORLD("%world"), PREFIX("%prefix"), SUFFIX("%suffix"), MESSAGE(
-				"%message");
+				"%message"), GROUP("%group");
 
 		private String field;
 
