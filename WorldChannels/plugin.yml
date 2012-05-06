@@ -1,0 +1,15 @@
+name: WorldChannels
+main: com.mitsugaru.WorldChannels.WorldChannels
+description: Plugin to support per world chat configuration.
+version: 0.1
+author: Mitsugaru
+depend: [Vault]
+
+commands:
+  wc:
+    description: Root command
+
+permissions:
+  WorldChannels.admin:
+    description: Administrate plugin
+    default: op
