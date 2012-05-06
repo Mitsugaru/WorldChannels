@@ -29,8 +29,8 @@ public class WorldChannels extends JavaPlugin
 		configHandler = new ConfigHandler(this);
 		LocalizeConfig.init(this);
 		// Grab Chat class from Vault
-		RegisteredServiceProvider<Chat> chatProvider = this.getServer()
-				.getServicesManager().getRegistration(Chat.class);
+		RegisteredServiceProvider<net.milkbowl.vault.chat.Chat> chatProvider = this.getServer()
+				.getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
 		if (chatProvider != null)
 		{
 			chat = chatProvider.getProvider();
