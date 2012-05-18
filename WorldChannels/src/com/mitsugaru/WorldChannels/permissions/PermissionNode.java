@@ -1,16 +1,17 @@
 package com.mitsugaru.WorldChannels.permissions;
 
-public enum Permission
+public enum PermissionNode
 {
-	ADMIN(".admin"), COLORIZE(".colorize");
+	ADMIN(".admin"), COLORIZE(".colorize"), OBSERVE(".observe"), OBSERVE_AUTO(
+			".observe.auto"), SHOUT(".shout");
 	private static final String prefix = "WorldChannels";
 	private String node;
 
-	private Permission(String node)
+	private PermissionNode(String node)
 	{
 		this.node = prefix + node;
 	}
-	
+
 	public String getNode()
 	{
 		return node;

@@ -1,5 +1,8 @@
 package com.mitsugaru.WorldChannels;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.ChatColor;
@@ -9,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.config.LocalizeConfig;
-import com.mitsugaru.WorldChannels.events.ChatListener;
+import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
 public class WorldChannels extends JavaPlugin
@@ -18,6 +21,7 @@ public class WorldChannels extends JavaPlugin
 	public static String TAG = "[WorldChannels]";
 	private ConfigHandler configHandler;
 	private PermCheck perm;
+	public static Set<String> observers = new HashSet<String>();
 
 	/**
 	 * Method that is called when plugin is enabled
@@ -40,7 +44,7 @@ public class WorldChannels extends JavaPlugin
 			getCommand("wc").setExecutor(new Commander(this));
 			// Setup listeners
 			final PluginManager pm = this.getServer().getPluginManager();
-			pm.registerEvents(new ChatListener(this), this);
+			pm.registerEvents(new WChatListener(this), this);
 		}
 		else
 		{

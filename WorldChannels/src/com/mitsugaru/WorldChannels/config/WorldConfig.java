@@ -14,16 +14,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mitsugaru.WorldChannels.WorldChannels;
 
-public class Config
+public class WorldConfig
 {
-	private String worldName;
+	private String worldName, formatterString;
 	private WorldChannels plugin;
 	private File file;
 	private YamlConfiguration config;
 	private boolean formatterUse, includeLocal;
-	private String formatterString;
 
-	public Config(WorldChannels plugin, String worldName)
+	public WorldConfig(WorldChannels plugin, String worldName)
 	{
 		this.plugin = plugin;
 		this.worldName = worldName;

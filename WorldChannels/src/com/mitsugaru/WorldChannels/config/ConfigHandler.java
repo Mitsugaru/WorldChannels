@@ -17,8 +17,8 @@ import com.mitsugaru.WorldChannels.WorldChannels;
 public class ConfigHandler
 {
 	private WorldChannels plugin;
-	private Map<String, Config> configs = new HashMap<String, Config>();
-	private String formatterString;
+	private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
+	private String formatterString, shoutFormat;
 	private boolean formatterUse;
 	public boolean debugTime;
 
@@ -32,6 +32,7 @@ public class ConfigHandler
 		defaults.put("formatter.use", true);
 		defaults.put("formatter.defaultFormat",
 				"%world %group %prefix%name%suffix: %message");
+		defaults.put("shout.format", "%prefix%name%suffix shouts: %message");
 		defaults.put("debug.time", false);
 		defaults.put("version", plugin.getDescription().getVersion());
 		// Insert defaults into config file if they're not present
@@ -59,7 +60,7 @@ public class ConfigHandler
 		for (World world : worlds)
 		{
 			final String worldName = world.getName();
-			configs.put(worldName, new Config(plugin, worldName));
+			configs.put(worldName, new WorldConfig(plugin, worldName));
 		}
 		plugin.getLogger().info("Configuration loaded");
 	}
@@ -67,7 +68,7 @@ public class ConfigHandler
 	public void reloadConfigs()
 	{
 		plugin.reloadConfig();
-		for (Config config : configs.values())
+		for (WorldConfig config : configs.values())
 		{
 			config.reload();
 		}
@@ -83,17 +84,21 @@ public class ConfigHandler
 		formatterString = config.getString("formatter.defaultFormat",
 				"%world %group %prefix%name%suffix: %message");
 		/**
+		 * Shout
+		 */
+		shoutFormat = config.getString("shout.format", "%prefix%name%suffix shouts: %message");
+		/**
 		 * Debug
 		 */
 		debugTime = config.getBoolean("debug.time", false);
 	}
 
-	public Config getWorldConfig(String worldName)
+	public WorldConfig getWorldConfig(String worldName)
 	{
-		Config out = configs.get(worldName);
+		WorldConfig out = configs.get(worldName);
 		if (out == null)
 		{
-			out = new Config(plugin, worldName);
+			out = new WorldConfig(plugin, worldName);
 			configs.put(worldName, out);
 		}
 		return out;
@@ -121,5 +126,10 @@ public class ConfigHandler
 	public String getFormat()
 	{
 		return formatterString;
+	}
+	
+	public String getShoutFormat()
+	{
+		return shoutFormat;
 	}
 }

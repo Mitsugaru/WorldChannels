@@ -13,16 +13,16 @@ import org.bukkit.event.player.PlayerChatEvent;
 import com.mitsugaru.WorldChannels.WChat;
 import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.config.Config;
+import com.mitsugaru.WorldChannels.config.WorldConfig;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
-import com.mitsugaru.WorldChannels.permissions.Permission;
+import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
-public class ChatListener implements Listener
+public class WChatListener implements Listener
 {
 	private WorldChannels plugin;
 	private ConfigHandler configHandler;
 
-	public ChatListener(WorldChannels plugin)
+	public WChatListener(WorldChannels plugin)
 	{
 		this.plugin = plugin;
 		this.configHandler = plugin.getConfigHandler();
@@ -46,7 +46,7 @@ public class ChatListener implements Listener
 				// Get world name
 				final String worldName = event.getPlayer().getWorld().getName();
 				// Grab world specific config
-				final Config config = plugin.getConfigHandler().getWorldConfig(
+				final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
 						worldName);
 				Set<Player> receivers;
 				if (config.includeLocalPlayers())
@@ -77,6 +77,18 @@ public class ChatListener implements Listener
 						catch (NullPointerException n)
 						{
 							// IGNORE
+						}
+					}
+				}
+				// Add observers
+				for(String observer : WorldChannels.observers)
+				{
+					final Player player = plugin.getServer().getPlayer(observer);
+					if(player != null)
+					{
+						if(player.isOnline())
+						{
+							receivers.add(player);
 						}
 					}
 				}
@@ -121,7 +133,7 @@ public class ChatListener implements Listener
 					}
 				}
 				// Check if we colorize their chat
-				if(plugin.getPermissionsHandler().checkPermission(event.getPlayer(), Permission.COLORIZE.getNode()))
+				if(plugin.getPermissionsHandler().checkPermission(event.getPlayer(), PermissionNode.COLORIZE.getNode()))
 				{
 					event.setMessage(WorldChannels.colorizeText(event.getMessage()));
 				}

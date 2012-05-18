@@ -6,10 +6,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
-import com.mitsugaru.WorldChannels.permissions.Permission;
+import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
 public class Commander implements CommandExecutor
 {
@@ -57,21 +59,107 @@ public class Commander implements CommandExecutor
 			}
 			else if (com.equals("reload"))
 			{
-				if (perm.checkPermission(sender, Permission.ADMIN.getNode()))
+				if (perm.checkPermission(sender, PermissionNode.ADMIN))
 				{
 					configHandler.reloadConfigs();
-					sender.sendMessage(LocalString.RELOAD_CONFIG.parseString(info));
+					sender.sendMessage(LocalString.RELOAD_CONFIG
+							.parseString(info));
 				}
 				else
 				{
-					info.put(LocalString.Flag.EXTRA, Permission.ADMIN.getNode());
-					sender.sendMessage(LocalString.PERMISSION_DENY.parseString(info));
+					info.put(LocalString.Flag.EXTRA,
+							PermissionNode.ADMIN.getNode());
+					sender.sendMessage(LocalString.PERMISSION_DENY
+							.parseString(info));
+				}
+			}
+			else if (com.equals("shout"))
+			{
+				if (perm.checkPermission(sender, PermissionNode.SHOUT))
+				{
+					// Set info of fields for formatting message and format
+					final EnumMap<Field, String> shoutInfo = new EnumMap<Field, String>(
+							Field.class);
+					shoutInfo.put(Field.NAME, sender.getName());
+					String worldName = "", groupName = "", prefix = "", suffix = "";
+					if (sender instanceof Player)
+					{
+						worldName = ((Player) sender).getWorld().getName();
+						try
+						{
+							groupName = WorldChannels.chat
+									.getPlayerGroups((Player) sender)[0];
+
+						}
+						catch (ArrayIndexOutOfBoundsException a)
+						{
+							// IGNORE
+						}
+						prefix = WorldChannels.chat.getPlayerPrefix(worldName,
+								sender.getName());
+
+						suffix = WorldChannels.chat.getPlayerSuffix(worldName,
+								sender.getName());
+					}
+					shoutInfo.put(Field.WORLD, worldName);
+					shoutInfo.put(Field.GROUP, groupName);
+					shoutInfo.put(Field.PREFIX, prefix);
+					shoutInfo.put(Field.SUFFIX, suffix);
+					final StringBuilder sb = new StringBuilder();
+					for (int i = 1; i < args.length; i++)
+					{
+						sb.append(args[i] + " ");
+					}
+					if (sb.length() > 0)
+					{
+						sb.toString().replaceAll("\\s+$", "");
+					}
+					shoutInfo.put(Field.MESSAGE, sb.toString());
+					plugin.getServer().broadcastMessage(
+							WChat.parseString(plugin.getConfigHandler()
+									.getShoutFormat(), shoutInfo));
+				}
+				else
+				{
+					info.put(LocalString.Flag.EXTRA,
+							PermissionNode.SHOUT.getNode());
+					sender.sendMessage(LocalString.PERMISSION_DENY
+							.parseString(info));
+				}
+			}
+			else if(com.equals("observe") || com.equals("listen"))
+			{
+				if (perm.checkPermission(sender, PermissionNode.OBSERVE))
+				{
+					final String name = sender.getName();
+					if(WorldChannels.observers.contains(name))
+					{
+						//Remove from observer list
+						WorldChannels.observers.remove(name);
+						sender.sendMessage(LocalString.OBSERVER_OFF
+								.parseString(info));
+					}
+					else
+					{
+						//Add to observer list
+						WorldChannels.observers.add(name);
+						sender.sendMessage(LocalString.OBSERVER_ON
+								.parseString(info));
+					}
+				}
+				else
+				{
+					info.put(LocalString.Flag.EXTRA,
+							PermissionNode.OBSERVE.getNode());
+					sender.sendMessage(LocalString.PERMISSION_DENY
+							.parseString(info));
 				}
 			}
 			else
 			{
 				info.put(LocalString.Flag.EXTRA, com);
-				sender.sendMessage(LocalString.UNKNOWN_COMMAND.parseString(info));
+				sender.sendMessage(LocalString.UNKNOWN_COMMAND
+						.parseString(info));
 			}
 		}
 		if (configHandler.debugTime)
@@ -109,9 +197,13 @@ public class Commander implements CommandExecutor
 		sender.sendMessage(ChatColor.BLUE + "==========" + ChatColor.GOLD
 				+ "WorldChannels" + ChatColor.BLUE + "==========");
 		sender.sendMessage(LocalString.HELP_HELP.parseString(null));
-		if (perm.checkPermission(sender, Permission.ADMIN.getNode()))
+		if (perm.checkPermission(sender, PermissionNode.ADMIN))
 		{
 			sender.sendMessage(LocalString.HELP_ADMIN_RELOAD.parseString(null));
+		}
+		if(perm.checkPermission(sender, PermissionNode.SHOUT))
+		{
+			sender.sendMessage(LocalString.HELP_SHOUT.parseString(null));
 		}
 		sender.sendMessage(LocalString.HELP_VERSION.parseString(null));
 	}

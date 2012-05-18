@@ -1,7 +1,7 @@
 name: WorldChannels
 main: com.mitsugaru.WorldChannels.WorldChannels
 description: Plugin to support per world chat configuration.
-version: 0.1
+version: 0.11
 author: Mitsugaru
 depend: [Vault]
 
@@ -12,6 +12,15 @@ commands:
 permissions:
   WorldChannels.colorize:
     description: Can use chat colors.
+    default: op
+  WorldChannels.shout:
+    description: Speak to all players on the server
+    default: op
+  WorldChannels.observe:
+    description: Listen to all worlds
+    default: op
+  WorldChannels.observe.auto:
+    description: Automatically listen to all worlds on join
     default: op
   WorldChannels.admin:
     description: Administrate plugin

@@ -47,11 +47,16 @@ public class PermCheck {
 		}
 
 	}
+	
+	public boolean checkPermission(CommandSender sender, PermissionNode node)
+	{
+		return checkPermission(sender, node.getNode());
+	}
 
 	/**
 	 *
 	 * @param CommandSender that sent command
-	 * @param Permission node to check, as String
+	 * @param PermissionNode node to check, as String
 	 * @return true if sender has the node, else false
 	 */
 	public boolean checkPermission(CommandSender sender, String node)

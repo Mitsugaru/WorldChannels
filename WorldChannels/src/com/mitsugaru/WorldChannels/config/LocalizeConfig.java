@@ -19,7 +19,7 @@ public class LocalizeConfig
 	private static File file;
 	private static YamlConfiguration config;
 	public static String permissionDeny, unknownCommand, helpHelp,
-			helpAdminReload, helpVersion, reloadConfig;
+			helpAdminReload, helpVersion, reloadConfig, helpShout, observerOn, observerOff;
 
 	public static void init(WorldChannels wc)
 	{
@@ -74,11 +74,15 @@ public class LocalizeConfig
 		// LinkedHashmap of defaults
 		final Map<String, String> defaults = new LinkedHashMap<String, String>();
 		// defaults for all strings
+		defaults.put("message.observer.on", "&a%tag Observer mode on");
+		defaults.put("message.observer.off", "&a%tag Observer mode off");
 		defaults.put("message.noPermission", "&c%tag Lack permission: %extra");
 		defaults.put("message.reloadConfig", "&a%tag &fConfig reloaded.");
 		defaults.put("message.unknownCommand",
 				"&c%tag Unknown command '&6%extra&c'. Bad syntax.");
 		defaults.put("help.help", "&a/wc help&e : Show help menu");
+		defaults.put("help.shout", "&a/wc shout <message...>&e : Shout message");
+		
 		defaults.put("help.admin.reload",
 				"&a/wc reload&e : Reload all config files");
 		defaults.put("help.version",
@@ -108,9 +112,12 @@ public class LocalizeConfig
 				"&c%tag Lack permission: %extra");
 		reloadConfig = config.getString("message.reloadConfig",
 				"&a%tag &fConfig reloaded.");
+		observerOn = config.getString("message.observer.on", "&a%tag Observer mode on");
+		observerOff = config.getString("message.observer.off", "&a%tag Observer mode off");
 		/**
 		 * help
 		 */
+		helpShout = config.getString("help.shout", "&a/wc shout <message...>&e : Shout message");
 		helpHelp = config.getString("help.help",
 				"&a/wc help&e : Show help menu");
 		helpAdminReload = config.getString("help.admin.reload",
