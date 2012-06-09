@@ -15,6 +15,11 @@ import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
+//TODO friends list, mutual acception
+//TODO join specific worlds
+//TODO global chat, separate channel
+//TODO world specific auto-announcer
+
 public class WorldChannels extends JavaPlugin
 {
 	public static Chat chat;
