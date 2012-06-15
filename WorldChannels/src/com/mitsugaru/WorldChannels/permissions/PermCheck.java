@@ -2,15 +2,10 @@ package com.mitsugaru.WorldChannels.permissions;
 
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.mitsugaru.WorldChannels.WorldChannels;
-
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
  * Class to handle permission node checks.
@@ -61,27 +56,11 @@ public class PermCheck {
 	 */
 	public boolean checkPermission(CommandSender sender, String node)
 	{
-		//Use PEX first
-		if(Bukkit.getServer().getPluginManager().isPluginEnabled("PermissionsEx"))
-		{
-			//Pex only supports player check, no CommandSender objects
-			if(sender instanceof Player)
-			{
-				final Player p = (Player) sender;
-				final PermissionManager permissions = PermissionsEx.getPermissionManager();
-				//Handle pex check
-				if(permissions.has(p, node))
-				{
-					return true;
-				}
-			}
-		}
 		//Use vault if we have it
 		if(hasVault && perm != null)
 		{
 			return perm.has(sender, node);
 		}
-		//If not using PEX / Vault, OR if sender is not a player (in PEX only case)
 		//Attempt to use SuperPerms or op
 		if(sender.isOp() || sender.hasPermission(node))
 		{
