@@ -13,6 +13,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.WorldChannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig
 {
@@ -20,7 +21,11 @@ public class WorldConfig
 	private WorldChannels plugin;
 	private File file;
 	private YamlConfiguration config;
-	private boolean formatterUse, includeLocal;
+	private boolean formatterUse, includeLocal, announcerUse;
+	private static final int minutesToTicks = 3600;
+	private int announcerInterval = 15, announcerId = -1;
+	private List<String> announcements = new ArrayList<String>(),
+			broadcastWorlds = new ArrayList<String>();
 
 	public WorldConfig(WorldChannels plugin, String worldName)
 	{
@@ -30,8 +35,7 @@ public class WorldConfig
 		this.file = new File(plugin.getDataFolder().getAbsolutePath()
 				+ "/worlds/" + worldName + ".yml");
 		this.config = YamlConfiguration.loadConfiguration(file);
-		loadDefaults();
-		loadVariables();
+		reload();
 	}
 
 	public void save()
@@ -70,15 +74,20 @@ public class WorldConfig
 		}
 		loadDefaults();
 		loadVariables();
+		boundsCheck();
+		startAnnouncer();
 	}
 
 	private void loadDefaults()
 	{
 		// LinkedHashmap of defaults
 		final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
-		// TODO defaults
 		defaults.put("formatter.use", false);
-		defaults.put("formatter.format", "%world %group %prefix%name%suffix: %message");
+		defaults.put("formatter.format",
+				"%world %group %prefix%name%suffix: %message");
+		defaults.put("announcer.use", false);
+		defaults.put("announcer.interval", 15);
+		defaults.put("announcer.annoucements", new ArrayList<String>());
 		defaults.put("includeLocalPlayers", true);
 		defaults.put("broadcastToWorlds", new ArrayList<String>());
 		// Add to config if missing
@@ -99,16 +108,50 @@ public class WorldConfig
 		formatterString = config.getString("formatter.format",
 				"%world %group %prefix%name%suffix: %message");
 		includeLocal = config.getBoolean("includeLocalPlayers", true);
+		announcerUse = config.getBoolean("announcer.use", false);
+		announcerInterval = config.getInt("announcer.interval", 15);
+		announcements = config.getStringList("announcer.annoucements");
+	}
+
+	private void boundsCheck()
+	{
+		if (announcerInterval <= 0)
+		{
+			announcerInterval = 15;
+		}
+		if (announcements == null)
+		{
+			announcements = new ArrayList<String>();
+		}
+		broadcastWorlds = config.getStringList("broadcastToWorlds");
+		if (broadcastWorlds == null)
+		{
+			broadcastWorlds = new ArrayList<String>();
+		}
+	}
+
+	private void startAnnouncer()
+	{
+		if (announcerId != -1)
+		{
+			// Stop previous announcer
+			plugin.getServer().getScheduler().cancelTask(announcerId);
+		}
+		if (!announcerUse || announcements.isEmpty())
+		{
+			return;
+		}
+		announcerId = plugin
+				.getServer()
+				.getScheduler()
+				.scheduleSyncRepeatingTask(plugin,
+						new WorldAnnouncerTask(worldName, announcements), 0,
+						announcerInterval * minutesToTicks);
 	}
 
 	public List<String> getWorldList()
 	{
-		List<String> listeners = config.getStringList("broadcastToWorlds");
-		if (listeners == null)
-		{
-			listeners = new ArrayList<String>();
-		}
-		return listeners;
+		return broadcastWorlds;
 	}
 
 	public String getWorldName()
@@ -120,12 +163,12 @@ public class WorldConfig
 	{
 		return formatterUse;
 	}
-	
+
 	public String getFormat()
 	{
 		return formatterString;
 	}
-	
+
 	public boolean includeLocalPlayers()
 	{
 		return includeLocal;
