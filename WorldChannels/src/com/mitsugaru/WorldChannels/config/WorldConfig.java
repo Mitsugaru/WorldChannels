@@ -22,7 +22,7 @@ public class WorldConfig
 	private File file;
 	private YamlConfiguration config;
 	private boolean formatterUse, includeLocal, announcerUse;
-	private static final int minutesToTicks = 3600;
+	private static final int minutesToTicks = 1200;
 	private int announcerInterval = 15, announcerId = -1;
 	private List<String> announcements = new ArrayList<String>(),
 			broadcastWorlds = new ArrayList<String>();
