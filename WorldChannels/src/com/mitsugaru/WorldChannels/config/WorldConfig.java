@@ -160,12 +160,13 @@ public class WorldConfig
 		{
 			return;
 		}
+		final int delay = announcerInterval * minutesToTicks;
 		announcerId = plugin
 				.getServer()
 				.getScheduler()
 				.scheduleSyncRepeatingTask(plugin,
-						new WorldAnnouncerTask(worldName, announcements), 0,
-						announcerInterval * minutesToTicks);
+						new WorldAnnouncerTask(worldName, announcements),
+						delay, delay);
 	}
 
 	public List<String> getWorldList()
