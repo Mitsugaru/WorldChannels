@@ -34,6 +34,19 @@ public class WorldConfig
 		// Grab file
 		this.file = new File(plugin.getDataFolder().getAbsolutePath()
 				+ "/worlds/" + worldName + ".yml");
+		if (!file.exists())
+		{
+			try
+			{
+				file.createNewFile();
+			}
+			catch (IOException e)
+			{
+				plugin.getLogger().severe(
+						"Could not create config file for world: " + worldName);
+				e.printStackTrace();
+			}
+		}
 		this.config = YamlConfiguration.loadConfiguration(file);
 		reload();
 	}
@@ -62,14 +75,20 @@ public class WorldConfig
 		}
 		catch (FileNotFoundException e)
 		{
+			plugin.getLogger().severe(
+					"Could not find config file for world: " + worldName);
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
+			plugin.getLogger().severe(
+					"IOException for config file for world: " + worldName);
 			e.printStackTrace();
 		}
 		catch (InvalidConfigurationException e)
 		{
+			plugin.getLogger().severe(
+					"Invalid config file for world: " + worldName);
 			e.printStackTrace();
 		}
 		loadDefaults();
