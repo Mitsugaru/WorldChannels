@@ -15,15 +15,13 @@ import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
-//TODO friends list, mutual acception
 //TODO join specific worlds
 //TODO global chat, separate channel
-//TODO world specific auto-announcer
 
 public class WorldChannels extends JavaPlugin
 {
 	public static Chat chat;
-	public static String TAG = "[WorldChannels]";
+	public static final String TAG = "[WorldChannels]";
 	private ConfigHandler configHandler;
 	private PermCheck perm;
 	public static Set<String> observers = new HashSet<String>();
@@ -38,8 +36,8 @@ public class WorldChannels extends JavaPlugin
 		configHandler = new ConfigHandler(this);
 		LocalizeConfig.init(this);
 		// Grab Chat class from Vault
-		RegisteredServiceProvider<net.milkbowl.vault.chat.Chat> chatProvider = this.getServer()
-				.getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+		RegisteredServiceProvider<Chat> chatProvider = this.getServer()
+				.getServicesManager().getRegistration(Chat.class);
 		if (chatProvider != null)
 		{
 			chat = chatProvider.getProvider();
