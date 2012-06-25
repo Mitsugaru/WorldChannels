@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.mitsugaru.WorldChannels.WorldChannels;
+
 public class WorldAnnouncerTask implements Runnable
 {
 
@@ -28,7 +30,7 @@ public class WorldAnnouncerTask implements Runnable
 		{
 			return;
 		}
-		final String out = announcements.get(current++);
+		final String out = WorldChannels.colorizeText(announcements.get(current++));
 		if(current >= announcements.size())
 		{
 			current = 0;
