@@ -61,6 +61,8 @@ public class WChatListener implements Listener {
 	} else {
 	    receivers = new HashSet<Player>();
 	}
+	//Add player to receivers by default
+	receivers.add(player);
 	// Grab list
 	final Set<String> worldList = plugin.getConfigHandler()
 		.getWorldChannels(worldName);
