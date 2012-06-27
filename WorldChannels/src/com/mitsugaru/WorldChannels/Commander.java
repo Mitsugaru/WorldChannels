@@ -87,7 +87,7 @@ public class Commander implements CommandExecutor
 						worldName = ((Player) sender).getWorld().getName();
 						try
 						{
-							groupName = WorldChannels.chat
+							groupName = WorldChannels.getChat()
 									.getPlayerGroups((Player) sender)[0];
 
 						}
@@ -95,10 +95,10 @@ public class Commander implements CommandExecutor
 						{
 							// IGNORE
 						}
-						prefix = WorldChannels.chat.getPlayerPrefix(worldName,
+						prefix = WorldChannels.getChat().getPlayerPrefix(worldName,
 								sender.getName());
 
-						suffix = WorldChannels.chat.getPlayerSuffix(worldName,
+						suffix = WorldChannels.getChat().getPlayerSuffix(worldName,
 								sender.getName());
 					}
 					shoutInfo.put(Field.WORLD, worldName);
