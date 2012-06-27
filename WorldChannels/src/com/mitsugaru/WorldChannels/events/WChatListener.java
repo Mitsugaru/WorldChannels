@@ -105,17 +105,17 @@ public class WChatListener implements Listener {
 	info.put(Field.WORLD, worldName);
 	try {
 	    info.put(Field.GROUP,
-		    WorldChannels.getChat().getPlayerGroups(player)[0]);
+		    plugin.getChat().getPlayerGroups(player)[0]);
 	} catch (ArrayIndexOutOfBoundsException a) {
 	    // IGNORE
 	}
 	info.put(
 		Field.PREFIX,
-		WorldChannels.getChat().getPlayerPrefix(worldName,
+		plugin.getChat().getPlayerPrefix(worldName,
 			player.getName()));
 	info.put(
 		Field.SUFFIX,
-		WorldChannels.getChat().getPlayerSuffix(worldName,
+		plugin.getChat().getPlayerSuffix(worldName,
 			player.getName()));
 	info.put(Field.MESSAGE, "%2\\$s");
 	// Check if we are going to edit the format at all

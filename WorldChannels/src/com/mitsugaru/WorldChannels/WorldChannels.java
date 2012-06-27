@@ -16,11 +16,11 @@ import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermCheck;
 
 public class WorldChannels extends JavaPlugin {
-    private static Chat chat;
+    private Chat chat;
     public static final String TAG = "[WorldChannels]";
     private ConfigHandler configHandler;
     private PermCheck perm;
-    public static Set<String> observers = new HashSet<String>();
+    public static final Set<String> observers = new HashSet<String>();
 
     /**
      * Method that is called when plugin is enabled
@@ -58,7 +58,7 @@ public class WorldChannels extends JavaPlugin {
 	return perm;
     }
 
-    public static Chat getChat() {
+    public Chat getChat() {
 	return chat;
     }
 
