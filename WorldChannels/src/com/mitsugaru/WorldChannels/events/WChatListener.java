@@ -60,8 +60,6 @@ public class WChatListener implements Listener {
 	} else {
 	    receivers = new HashSet<Player>();
 	}
-	//Add player to receivers by default
-	receivers.add(player);
 	// Grab list
 	final Set<String> worldList = plugin.getConfigHandler()
 		.getWorldChannels(worldName);
@@ -86,6 +84,21 @@ public class WChatListener implements Listener {
 		}
 	    }
 	}
+	boolean empty = false;
+	if(receivers.isEmpty())
+	{
+	    empty = true;
+	    if(config.useNobody())
+	    {
+		player.sendMessage(WChat.parseString(config.getNobodyMessage(), null));
+	    }
+	    else
+	    {
+		player.sendMessage(WChat.parseString(configHandler.getNobodyMessage(), null));
+	    }
+	}
+	//Add player to receivers by default
+	receivers.add(player);
 	// Add observers
 	for (String observer : WorldChannels.observers) {
 	    final Player playerObserver = plugin.getServer()
@@ -98,6 +111,10 @@ public class WChatListener implements Listener {
 	event.getRecipients().clear();
 	// Add our receivers
 	event.getRecipients().addAll(receivers);
+	if(empty)
+	{
+	    return;
+	}
 	// Set info of fields for formatting message and format
 	final EnumMap<Field, String> info = new EnumMap<Field, String>(
 		Field.class);

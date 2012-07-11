@@ -11,7 +11,7 @@ public enum LocalString {
 	    LocalizeConfig.reloadConfig), HELP_HELP(LocalizeConfig.helpHelp), HELP_VERSION(
 	    LocalizeConfig.helpVersion), HELP_ADMIN_RELOAD(
 	    LocalizeConfig.helpAdminReload), HELP_SHOUT(
-	    LocalizeConfig.helpShout), OBSERVER_ON(LocalizeConfig.observerOn), OBSERVER_OFF(
+	    LocalizeConfig.helpShout), HELP_OBSERVE(LocalizeConfig.helpObserve), OBSERVER_ON(LocalizeConfig.observerOn), OBSERVER_OFF(
 	    LocalizeConfig.observerOff);
 
     private String string;

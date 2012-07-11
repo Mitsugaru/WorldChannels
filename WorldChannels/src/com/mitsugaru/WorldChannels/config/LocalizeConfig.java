@@ -19,7 +19,7 @@ public class LocalizeConfig
 	private static File file;
 	private static YamlConfiguration config;
 	public static String permissionDeny, unknownCommand, helpHelp,
-			helpAdminReload, helpVersion, reloadConfig, helpShout, observerOn, observerOff;
+			helpAdminReload, helpVersion, reloadConfig, helpShout, helpObserve, observerOn, observerOff;
 
 	public static void init(WorldChannels wc)
 	{
@@ -82,7 +82,7 @@ public class LocalizeConfig
 				"&c%tag Unknown command '&6%extra&c'. Bad syntax.");
 		defaults.put("help.help", "&a/wc help&e : Show help menu");
 		defaults.put("help.shout", "&a/wc shout <message...>&e : Shout message");
-		
+		defaults.put("help.observe", "&a/wc observe &e: Toggle observe mode");
 		defaults.put("help.admin.reload",
 				"&a/wc reload&e : Reload all config files");
 		defaults.put("help.version",
@@ -120,6 +120,7 @@ public class LocalizeConfig
 		helpShout = config.getString("help.shout", "&a/wc shout <message...>&e : Shout message");
 		helpHelp = config.getString("help.help",
 				"&a/wc help&e : Show help menu");
+		helpObserve = config.getString("help.observe", "&a/wc observe &e: Toggle observe mode");
 		helpAdminReload = config.getString("help.admin.reload",
 				"&a/wc reload&e : Reload all config files");
 		helpVersion = config.getString("help.version",

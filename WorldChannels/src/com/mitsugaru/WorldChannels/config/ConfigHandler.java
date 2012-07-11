@@ -17,7 +17,7 @@ import com.mitsugaru.WorldChannels.WorldChannels;
 public class ConfigHandler {
     private WorldChannels plugin;
     private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
-    private String formatterString, shoutFormat;
+    private String formatterString, shoutFormat, nobodyString;
     private boolean formatterUse;
     public boolean debugTime;
 
@@ -31,6 +31,7 @@ public class ConfigHandler {
 	defaults.put("formatter.defaultFormat",
 		"%world %group %prefix%name%suffix: %message");
 	defaults.put("shout.format", "%prefix%name%suffix shouts: %message");
+	defaults.put("nobody.message", "&No one can hear you...");
 	defaults.put("debug.time", false);
 	defaults.put("version", plugin.getDescription().getVersion());
 	// Insert defaults into config file if they're not present
@@ -84,6 +85,10 @@ public class ConfigHandler {
 	shoutFormat = config.getString("shout.format",
 		"%prefix%name%suffix shouts: %message");
 	/**
+	 * Nobody
+	 */
+	nobodyString = config.getString("nobody.message", "&No one can hear you...");
+	/**
 	 * Debug
 	 */
 	debugTime = config.getBoolean("debug.time", false);
@@ -119,5 +124,10 @@ public class ConfigHandler {
 
     public String getShoutFormat() {
 	return shoutFormat;
+    }
+    
+    public String getNobodyMessage()
+    {
+	return nobodyString;
     }
 }

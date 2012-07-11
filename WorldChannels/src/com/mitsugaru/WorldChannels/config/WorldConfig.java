@@ -16,11 +16,11 @@ import com.mitsugaru.WorldChannels.WorldChannels;
 import com.mitsugaru.WorldChannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig {
-    private String worldName, formatterString;
+    private String worldName, formatterString, nobodyString;
     private WorldChannels plugin;
     private File file;
     private YamlConfiguration config;
-    private boolean formatterUse, includeLocal, announcerUse, localUse;
+    private boolean formatterUse, includeLocal, announcerUse, localUse, nobodyUse;
     private static final int minutesToTicks = 1200;
     private int announcerInterval = 15, announcerId = -1, localRadius = 100;
     private List<String> announcements = new ArrayList<String>(),
@@ -90,8 +90,11 @@ public class WorldConfig {
 	defaults.put("announcer.annoucements", new ArrayList<String>());
 	defaults.put("local.use", false);
 	defaults.put("local.radius", 100);
+	defaults.put("nobody.use", false);
+	defaults.put("nobody.message", "&oNo one can hear you...");
 	defaults.put("includeLocalPlayers", true);
 	defaults.put("broadcastToWorlds", new ArrayList<String>());
+	
 	// Add to config if missing
 	for (final Entry<String, Object> e : defaults.entrySet()) {
 	    if (!config.contains(e.getKey())) {
@@ -112,6 +115,8 @@ public class WorldConfig {
 	announcements = config.getStringList("announcer.annoucements");
 	localUse = config.getBoolean("local.use", false);
 	localRadius = config.getInt("local.radius", 100);
+	nobodyUse = config.getBoolean("nobody.use", false);
+	nobodyString = config.getString("nobody.message", "&oNo one can hear you...");
     }
 
     private void boundsCheck() {
@@ -173,5 +178,15 @@ public class WorldConfig {
 
     public boolean includeLocalPlayers() {
 	return includeLocal;
+    }
+    
+    public boolean useNobody()
+    {
+	return nobodyUse;
+    }
+    
+    public String getNobodyMessage()
+    {
+	return nobodyString;
     }
 }

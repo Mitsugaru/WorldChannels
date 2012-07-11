@@ -165,6 +165,10 @@ public class Commander implements CommandExecutor {
 	if (perm.checkPermission(sender, PermissionNode.SHOUT)) {
 	    sender.sendMessage(LocalString.HELP_SHOUT.parseString(null));
 	}
+	if(perm.checkPermission(sender, PermissionNode.OBSERVE))
+	{
+	    sender.sendMessage(LocalString.HELP_OBSERVE.parseString(null));
+	}
 	sender.sendMessage(LocalString.HELP_VERSION.parseString(null));
     }
 
