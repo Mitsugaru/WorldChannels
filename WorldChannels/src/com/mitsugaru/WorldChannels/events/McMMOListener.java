@@ -1,5 +1,7 @@
 package com.mitsugaru.WorldChannels.events;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import com.gmail.nossr50.events.chat.McMMOAdminChatEvent;
@@ -16,6 +18,7 @@ public class McMMOListener implements Listener {
 	this.plugin = plugin;
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
     public void McMMOAdminChatEvent(McMMOAdminChatEvent event)
     {
 	if(event.getSender() != null)
@@ -25,6 +28,7 @@ public class McMMOListener implements Listener {
 	}
     }
     
+    @EventHandler(priority = EventPriority.MONITOR)
     public void McMMOPartyChatEvent(McMMOPartyChatEvent event)
     {
 	if(event.getSender() != null)
