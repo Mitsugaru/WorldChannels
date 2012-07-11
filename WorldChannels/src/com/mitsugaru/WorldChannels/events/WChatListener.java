@@ -50,9 +50,11 @@ public class WChatListener implements Listener {
 	{
 	    if(WorldChannels.mcmmoChat.contains(player.getName()))
 	    {
+		plugin.getLogger().info("admin/party chat");
 		WorldChannels.mcmmoChat.remove(player.getName());
 		return;
 	    }
+	    plugin.getLogger().info("not mcmmo chat");
 	}
 	if (event.getPlayer().getWorld() == null) {
 	    return;
