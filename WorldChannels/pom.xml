@@ -94,6 +94,13 @@
 			<artifactId>Vault</artifactId>
 			<version>1.2.17-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.gmail.nossr50</groupId>
+		    <artifactId>mcMMO</artifactId>
+		    <version>1.3.09-b945</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

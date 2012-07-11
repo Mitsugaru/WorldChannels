@@ -15,14 +15,11 @@ import com.mitsugaru.WorldChannels.WorldChannels;
  * @author Mitsugaru
  *
  */
-public class PermCheck {
-	private Permission perm;
-	private boolean hasVault;
-
-	/**
-	 * Constructor
-	 */
-	public PermCheck(WorldChannels plugin)
+public class PermissionHandler {
+	private static Permission perm;
+	private static boolean hasVault;
+	
+	public static void init(WorldChannels plugin)
 	{
 		if(plugin.getServer().getPluginManager().getPlugin("Vault") != null)
 		{
@@ -43,7 +40,7 @@ public class PermCheck {
 
 	}
 	
-	public boolean checkPermission(CommandSender sender, PermissionNode node)
+	public static boolean checkPermission(CommandSender sender, PermissionNode node)
 	{
 		return checkPermission(sender, node.getNode());
 	}
@@ -54,7 +51,7 @@ public class PermCheck {
 	 * @param PermissionNode node to check, as String
 	 * @return true if sender has the node, else false
 	 */
-	public boolean checkPermission(CommandSender sender, String node)
+	public static boolean checkPermission(CommandSender sender, String node)
 	{
 		//Use vault if we have it
 		if(hasVault && perm != null)

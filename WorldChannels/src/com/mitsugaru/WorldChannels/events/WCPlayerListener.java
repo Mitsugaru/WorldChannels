@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.mitsugaru.WorldChannels.LocalString;
 import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
 public class WCPlayerListener implements Listener
@@ -26,7 +27,7 @@ public class WCPlayerListener implements Listener
 		if (event.getPlayer() != null)
 		{
 			final Player player = event.getPlayer();
-			if (plugin.getPermissionsHandler().checkPermission(player,
+			if (PermissionHandler.checkPermission(player,
 					PermissionNode.OBSERVE_AUTO))
 			{
 				WorldChannels.observers.add(player.getName());

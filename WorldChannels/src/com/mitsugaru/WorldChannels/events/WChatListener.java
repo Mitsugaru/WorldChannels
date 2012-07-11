@@ -18,6 +18,7 @@ import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.WorldChannels;
 import com.mitsugaru.WorldChannels.config.WorldConfig;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
+import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
 public class WChatListener implements Listener {
@@ -42,6 +43,17 @@ public class WChatListener implements Listener {
 	if (event.isCancelled() || event.getPlayer() == null) {
 	    return;
 	}
+	// Grab player
+	final Player player = event.getPlayer();
+	//Check mcmmo
+	if(plugin.hasMcMMO())
+	{
+	    if(WorldChannels.mcmmoChat.contains(player.getName()))
+	    {
+		WorldChannels.mcmmoChat.remove(player.getName());
+		return;
+	    }
+	}
 	if (event.getPlayer().getWorld() == null) {
 	    return;
 	}
@@ -50,8 +62,7 @@ public class WChatListener implements Listener {
 	// Grab world specific config
 	final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
 		worldName);
-	// Grab player
-	final Player player = event.getPlayer();
+	
 	Set<Player> receivers = null;
 	if (config.includeLocalPlayers()) {
 	    // Add people of the original world
@@ -148,7 +159,7 @@ public class WChatListener implements Listener {
 	    }
 	}
 	// Check if we colorize their chat
-	if (plugin.getPermissionsHandler().checkPermission(player,
+	if (PermissionHandler.checkPermission(player,
 		PermissionNode.COLORIZE.getNode())) {
 	    event.setMessage(WorldChannels.colorizeText(event.getMessage()));
 	}

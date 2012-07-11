@@ -10,12 +10,11 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
-import com.mitsugaru.WorldChannels.permissions.PermCheck;
+import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
 public class Commander implements CommandExecutor {
     private final WorldChannels plugin;
-    private final PermCheck perm;
     private final ConfigHandler configHandler;
     private final static String bar = "======================";
     private long time;
@@ -23,7 +22,6 @@ public class Commander implements CommandExecutor {
     public Commander(WorldChannels plugin) {
 	this.plugin = plugin;
 	this.configHandler = plugin.getConfigHandler();
-	this.perm = plugin.getPermissionsHandler();
     }
 
     @Override
@@ -47,7 +45,7 @@ public class Commander implements CommandExecutor {
 	    } else if (com.equals("?") || com.equals("help")) {
 		this.displayHelp(sender);
 	    } else if (com.equals("reload")) {
-		if (perm.checkPermission(sender, PermissionNode.ADMIN)) {
+		if (PermissionHandler.checkPermission(sender, PermissionNode.ADMIN)) {
 		    configHandler.reloadConfigs();
 		    sender.sendMessage(LocalString.RELOAD_CONFIG
 			    .parseString(info));
@@ -58,7 +56,7 @@ public class Commander implements CommandExecutor {
 			    .parseString(info));
 		}
 	    } else if (com.equals("shout")) {
-		if (perm.checkPermission(sender, PermissionNode.SHOUT)) {
+		if (PermissionHandler.checkPermission(sender, PermissionNode.SHOUT)) {
 		    // Set info of fields for formatting message and format
 		    final EnumMap<Field, String> shoutInfo = new EnumMap<Field, String>(
 			    Field.class);
@@ -103,7 +101,7 @@ public class Commander implements CommandExecutor {
 			    .parseString(info));
 		}
 	    } else if (com.equals("observe") || com.equals("listen")) {
-		if (perm.checkPermission(sender, PermissionNode.OBSERVE)) {
+		if (PermissionHandler.checkPermission(sender, PermissionNode.OBSERVE)) {
 		    final String name = sender.getName();
 		    if (WorldChannels.observers.contains(name)) {
 			// Remove from observer list
@@ -159,13 +157,13 @@ public class Commander implements CommandExecutor {
 	sender.sendMessage(ChatColor.BLUE + "==========" + ChatColor.GOLD
 		+ "WorldChannels" + ChatColor.BLUE + "==========");
 	sender.sendMessage(LocalString.HELP_HELP.parseString(null));
-	if (perm.checkPermission(sender, PermissionNode.ADMIN)) {
+	if (PermissionHandler.checkPermission(sender, PermissionNode.ADMIN)) {
 	    sender.sendMessage(LocalString.HELP_ADMIN_RELOAD.parseString(null));
 	}
-	if (perm.checkPermission(sender, PermissionNode.SHOUT)) {
+	if (PermissionHandler.checkPermission(sender, PermissionNode.SHOUT)) {
 	    sender.sendMessage(LocalString.HELP_SHOUT.parseString(null));
 	}
-	if(perm.checkPermission(sender, PermissionNode.OBSERVE))
+	if(PermissionHandler.checkPermission(sender, PermissionNode.OBSERVE))
 	{
 	    sender.sendMessage(LocalString.HELP_OBSERVE.parseString(null));
 	}

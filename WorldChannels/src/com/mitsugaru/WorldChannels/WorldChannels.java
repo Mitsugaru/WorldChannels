@@ -6,21 +6,24 @@ import java.util.Set;
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.config.LocalizeConfig;
+import com.mitsugaru.WorldChannels.events.McMMOListener;
 import com.mitsugaru.WorldChannels.events.WChatListener;
-import com.mitsugaru.WorldChannels.permissions.PermCheck;
+import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 
 public class WorldChannels extends JavaPlugin {
     private Chat chat;
     public static final String TAG = "[WorldChannels]";
     private ConfigHandler configHandler;
-    private PermCheck perm;
+    private boolean mcmmo;
     public static final Set<String> observers = new HashSet<String>();
+    public static final Set<String> mcmmoChat = new HashSet<String>();
 
     /**
      * Method that is called when plugin is enabled
@@ -36,12 +39,23 @@ public class WorldChannels extends JavaPlugin {
 	if (chatProvider != null) {
 	    chat = chatProvider.getProvider();
 	    // Setup permissions
-	    perm = new PermCheck(this);
+	    PermissionHandler.init(this);
 	    // Setup commander
 	    getCommand("wc").setExecutor(new Commander(this));
 	    // Setup listeners
 	    final PluginManager pm = this.getServer().getPluginManager();
 	    pm.registerEvents(new WChatListener(this), this);
+	    Plugin mcmmoPlugin = getServer().getPluginManager().getPlugin(
+		    "mcMMO");
+	    if (mcmmoPlugin != null) {
+		McMMOListener mcmmoListener = new McMMOListener();
+		this.getServer().getPluginManager()
+			.registerEvents(mcmmoListener, this);
+		mcmmo = true;
+		getLogger().info("Hooked into mcMMO");
+	    } else {
+		mcmmo = false;
+	    }
 	} else {
 	    // They don't have vault (or have an outdated version)
 	    this.getLogger().warning(
@@ -54,12 +68,12 @@ public class WorldChannels extends JavaPlugin {
 	return configHandler;
     }
 
-    public PermCheck getPermissionsHandler() {
-	return perm;
-    }
-
     public Chat getChat() {
 	return chat;
+    }
+
+    public boolean hasMcMMO() {
+	return mcmmo;
     }
 
     /**
