@@ -12,36 +12,24 @@ import com.mitsugaru.WorldChannels.WorldChannels;
 import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 import com.mitsugaru.WorldChannels.permissions.PermissionNode;
 
-public class WCPlayerListener implements Listener
-{
-	private WorldChannels plugin;
+public class WCPlayerListener implements Listener {
 
-	public WCPlayerListener(WorldChannels plugin)
-	{
-		this.plugin = plugin;
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+	if (event.getPlayer() != null) {
+	    final Player player = event.getPlayer();
+	    if (PermissionHandler.checkPermission(player,
+		    PermissionNode.OBSERVE_AUTO)) {
+		WorldChannels.observers.add(player.getName());
+		player.sendMessage(LocalString.OBSERVER_ON.parseString(null));
+	    }
 	}
+    }
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerJoin(PlayerJoinEvent event)
-	{
-		if (event.getPlayer() != null)
-		{
-			final Player player = event.getPlayer();
-			if (PermissionHandler.checkPermission(player,
-					PermissionNode.OBSERVE_AUTO))
-			{
-				WorldChannels.observers.add(player.getName());
-				player.sendMessage(LocalString.OBSERVER_ON.parseString(null));
-			}
-		}
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+	if (event.getPlayer() != null) {
+	    WorldChannels.observers.remove(event.getPlayer().getName());
 	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerQuit(PlayerQuitEvent event)
-	{
-		if (event.getPlayer() != null)
-		{
-			WorldChannels.observers.remove(event.getPlayer().getName());
-		}
-	}
+    }
 }

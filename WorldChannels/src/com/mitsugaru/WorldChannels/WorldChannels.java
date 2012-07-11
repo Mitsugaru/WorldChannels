@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 import com.mitsugaru.WorldChannels.events.McMMOListener;
+import com.mitsugaru.WorldChannels.events.WCPlayerListener;
 import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
 
@@ -45,10 +46,11 @@ public class WorldChannels extends JavaPlugin {
 	    // Setup listeners
 	    final PluginManager pm = this.getServer().getPluginManager();
 	    pm.registerEvents(new WChatListener(this), this);
-	    Plugin mcmmoPlugin = getServer().getPluginManager().getPlugin(
+	    pm.registerEvents(new WCPlayerListener(), this);
+	    final Plugin mcmmoPlugin = pm.getPlugin(
 		    "mcMMO");
 	    if (mcmmoPlugin != null) {
-		McMMOListener mcmmoListener = new McMMOListener();
+		McMMOListener mcmmoListener = new McMMOListener(this);
 		this.getServer().getPluginManager()
 			.registerEvents(mcmmoListener, this);
 		mcmmo = true;
