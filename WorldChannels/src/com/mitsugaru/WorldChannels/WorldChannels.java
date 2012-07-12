@@ -6,14 +6,12 @@ import java.util.Set;
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.config.LocalizeConfig;
-import com.mitsugaru.WorldChannels.events.McMMOListener;
 import com.mitsugaru.WorldChannels.events.WCPlayerListener;
 import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
@@ -22,7 +20,6 @@ public class WorldChannels extends JavaPlugin {
     private Chat chat;
     public static final String TAG = "[WorldChannels]";
     private ConfigHandler configHandler;
-    private boolean mcmmo;
     public static final Set<String> observers = new HashSet<String>();
     public static final Set<String> mcmmoChat = new HashSet<String>();
 
@@ -47,17 +44,6 @@ public class WorldChannels extends JavaPlugin {
 	    final PluginManager pm = this.getServer().getPluginManager();
 	    pm.registerEvents(new WChatListener(this), this);
 	    pm.registerEvents(new WCPlayerListener(), this);
-	    final Plugin mcmmoPlugin = pm.getPlugin(
-		    "mcMMO");
-	    if (mcmmoPlugin != null) {
-		McMMOListener mcmmoListener = new McMMOListener(this);
-		this.getServer().getPluginManager()
-			.registerEvents(mcmmoListener, this);
-		mcmmo = true;
-		getLogger().info("Hooked into mcMMO");
-	    } else {
-		mcmmo = false;
-	    }
 	} else {
 	    // They don't have vault (or have an outdated version)
 	    this.getLogger().warning(
@@ -72,10 +58,6 @@ public class WorldChannels extends JavaPlugin {
 
     public Chat getChat() {
 	return chat;
-    }
-
-    public boolean hasMcMMO() {
-	return mcmmo;
     }
 
     /**
