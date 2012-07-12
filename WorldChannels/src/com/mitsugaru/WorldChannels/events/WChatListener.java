@@ -119,7 +119,6 @@ public class WChatListener implements Listener {
 	    {
 		player.sendMessage(WChat.parseString(configHandler.getNobodyMessage(), null));
 	    }
-	    return;
 	}
 	// Set info of fields for formatting message and format
 	final EnumMap<Field, String> info = new EnumMap<Field, String>(
