@@ -31,7 +31,7 @@ public class ConfigHandler {
 	defaults.put("formatter.defaultFormat",
 		"%world %group %prefix%name%suffix: %message");
 	defaults.put("shout.format", "%prefix%name%suffix shouts: %message");
-	defaults.put("nobody.message", "&No one can hear you...");
+	defaults.put("nobody.message", "&oNo one can hear you...");
 	defaults.put("debug.time", false);
 	defaults.put("version", plugin.getDescription().getVersion());
 	// Insert defaults into config file if they're not present
