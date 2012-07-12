@@ -90,14 +90,10 @@ public class WChatListener implements Listener {
 	if(receivers.isEmpty())
 	{
 	    empty = true;
-	    if(config.useNobody())
-	    {
-		player.sendMessage(WChat.parseString(config.getNobodyMessage(), null));
-	    }
-	    else
-	    {
-		player.sendMessage(WChat.parseString(configHandler.getNobodyMessage(), null));
-	    }
+	}
+	else if(receivers.size() == 1 && receivers.contains(player))
+	{
+	    empty = true;
 	}
 	//Add player to receivers by default
 	receivers.add(player);
@@ -115,6 +111,14 @@ public class WChatListener implements Listener {
 	event.getRecipients().addAll(receivers);
 	if(empty)
 	{
+	    if(config.useNobody())
+	    {
+		player.sendMessage(WChat.parseString(config.getNobodyMessage(), null));
+	    }
+	    else
+	    {
+		player.sendMessage(WChat.parseString(configHandler.getNobodyMessage(), null));
+	    }
 	    return;
 	}
 	// Set info of fields for formatting message and format
