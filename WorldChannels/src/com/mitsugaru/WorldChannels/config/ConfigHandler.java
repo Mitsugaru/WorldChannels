@@ -19,7 +19,7 @@ public class ConfigHandler {
     private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
     private String formatterString, shoutFormat, nobodyString;
     private boolean formatterUse;
-    public boolean debugTime;
+    public boolean debugTime, debugVault;
 
     public ConfigHandler(WorldChannels plugin) {
 	this.plugin = plugin;
@@ -33,6 +33,7 @@ public class ConfigHandler {
 	defaults.put("shout.format", "%prefix%name%suffix shouts: %message");
 	defaults.put("nobody.message", "&oNo one can hear you...");
 	defaults.put("debug.time", false);
+	defaults.put("debug.vault", false);
 	defaults.put("version", plugin.getDescription().getVersion());
 	// Insert defaults into config file if they're not present
 	for (final Entry<String, Object> e : defaults.entrySet()) {
@@ -92,6 +93,7 @@ public class ConfigHandler {
 	 * Debug
 	 */
 	debugTime = config.getBoolean("debug.time", false);
+	debugVault = config.getBoolean("debug.vault", false);
     }
 
     public WorldConfig getWorldConfig(String worldName) {
