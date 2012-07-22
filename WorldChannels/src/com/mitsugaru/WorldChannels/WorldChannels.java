@@ -30,6 +30,7 @@ public class WorldChannels extends JavaPlugin{
    public void onEnable(){
       // Initialize configs
       configHandler = new ConfigHandler(this);
+      configHandler.init();
       LocalizeConfig.init(this);
       // Grab Chat class from Vault
       final RegisteredServiceProvider<Chat> chatProvider = this.getServer()

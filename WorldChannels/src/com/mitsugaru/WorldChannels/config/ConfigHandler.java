@@ -26,7 +26,11 @@ public class ConfigHandler{
 
    public ConfigHandler(WorldChannels plugin){
       this.plugin = plugin;
-      // Load defaults
+   }
+   
+   public void init()
+   {
+   // Load defaults
       final ConfigurationSection config = plugin.getConfig();
       // LinkedHashmap of defaults
       final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
