@@ -124,10 +124,14 @@ public class ConfigHandler{
       }
       return out;
    }
-   
+
    private void loadGlobalChannels(){
       globalChannels.clear();
-      ConfigurationSection section = plugin.getConfig().getConfigurationSection("globalChannels");
+      ConfigurationSection section = plugin.getConfig()
+            .getConfigurationSection("globalChannels");
+      if(section == null){
+         return;
+      }
       for(String channelName : section.getKeys(false)){
          final String tag = section.getString(channelName + ".tag", "g");
          final Channel channel = new Channel(tag, channelName, "GLOBAL");
@@ -210,15 +214,15 @@ public class ConfigHandler{
          globalChannels.put(channelName, channel);
       }
    }
-   
-   private void hookGlobalChannels()
-   {
+
+   private void hookGlobalChannels(){
       for(Map.Entry<String, Channel> entry : globalChannels.entrySet()){
-         if(!(plugin.getConfig().contains("globalChannels." + entry.getKey() + ".linkedChannels"))){
+         if(!(plugin.getConfig().contains("globalChannels." + entry.getKey()
+               + ".linkedChannels"))){
             continue;
          }
-         List<String> links = plugin.getConfig().getStringList("globalChannels." + entry.getKey()
-               + ".linkedChannels");
+         List<String> links = plugin.getConfig().getStringList(
+               "globalChannels." + entry.getKey() + ".linkedChannels");
          for(String link : links){
             if(link.contains(":")){
                final String[] split = link.split(":");
@@ -232,14 +236,15 @@ public class ConfigHandler{
                   }else{
                      plugin.getLogger().warning(
                            "Link channel '" + split[1] + "' of other world '"
-                                 + split[0] + "' not found for global channel '"
+                                 + split[0]
+                                 + "' not found for global channel '"
                                  + entry.getKey() + "'");
                   }
                }else{
                   plugin.getLogger().warning(
                         "Other world '" + split[0]
-                              + "' not found for global channel '" + entry.getKey()
-                              + "'");
+                              + "' not found for global channel '"
+                              + entry.getKey() + "'");
                }
             }else if(globalChannels.containsKey(link)){
                // local world channel to hook to
@@ -247,8 +252,8 @@ public class ConfigHandler{
             }else{
                // Invalid entry
                plugin.getLogger().warning(
-                     "Invalid link channel entry '" + link + "' for global channel '"
-                           + entry.getKey() + "'");
+                     "Invalid link channel entry '" + link
+                           + "' for global channel '" + entry.getKey() + "'");
             }
          }
       }
@@ -269,9 +274,8 @@ public class ConfigHandler{
    public String getNobodyMessage(){
       return nobodyString;
    }
-   
-   public Collection<Channel> getGlobalChannels()
-   {
+
+   public Collection<Channel> getGlobalChannels(){
       return globalChannels.values();
    }
 }

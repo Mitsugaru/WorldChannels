@@ -165,6 +165,9 @@ public class WorldConfig{
    private void loadChannels(){
       channels.clear();
       ConfigurationSection section = config.getConfigurationSection("channels");
+      if(section == null){
+         return;
+      }
       for(String channelName : section.getKeys(false)){
          final String tag = section.getString(channelName + ".tag", channelTag);
          final Channel channel = new Channel(tag, channelName, worldName);
