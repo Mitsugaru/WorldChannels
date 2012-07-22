@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +15,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import com.mitsugaru.WorldChannels.WChat;
 import com.mitsugaru.WorldChannels.WChat.Field;
 import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.WorldChannels.channels.Channel;
 import com.mitsugaru.WorldChannels.config.WorldConfig;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
@@ -31,11 +31,56 @@ public class WChatListener implements Listener{
    }
 
    /**
+    * Handle hashtag quick message events
+    * 
+    * @param event - PlayerChatEvent that occurred
+    */
+   @EventHandler(priority = EventPriority.LOWEST)
+   public void hashMessage(final PlayerChatEvent event){
+      if(event.getPlayer() == null || event.getMessage() == null
+            || !configHandler.hashQuickMessage || event.isCancelled()){
+         return;
+      }else if(event.getPlayer().getWorld() == null){
+         return;
+      }
+      if(event.getMessage().charAt(0) != '#'){
+         return;
+      }
+      // Hash message
+      boolean ours = false;
+      Channel target = null;
+      final String userTag = event.getMessage().split(" ")[0].replace("#", "");
+      // Check world channels
+      final WorldConfig conf = configHandler.getWorldConfig(event.getPlayer()
+            .getWorld().getName());
+      for(Channel channel : conf.getChannels()){
+         if(channel.getTag().equalsIgnoreCase(userTag)){
+            ours = true;
+            target = channel;
+         }
+      }
+      // Check global channels, if not found
+      if(!ours){
+         for(Channel channel : configHandler.getGlobalChannels()){
+            if(channel.getTag().equalsIgnoreCase(userTag)){
+               ours = true;
+               target = channel;
+            }
+         }
+      }
+      if(ours){
+         // Handle text to channel recepients
+         handleChatEvent(event, conf, target);
+         event.setCancelled(true);
+      }
+   }
+
+   /**
     * Listen for ChatEvents to change who listens to it. Set to HIGHEST priority
     * so that other chat plugins can do what they need to do to the
     * message/format.
     * 
-    * @param PlayerChatEvent
+    * @param event - PlayerChatEvent that occurred
     */
    @EventHandler(priority = EventPriority.HIGHEST)
    public void chatEvent(final PlayerChatEvent event){
@@ -53,33 +98,40 @@ public class WChatListener implements Listener{
       // Grab world specific config
       final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
             worldName);
-
-      Set<Player> receivers = null;
-      if(config.includeLocalPlayers()){
-         // Add people of the original world
-         receivers = new HashSet<Player>(event.getPlayer().getWorld()
-               .getPlayers());
-      }else{
-         receivers = new HashSet<Player>();
+      Channel channel = null;
+      synchronized (WorldChannels.currentChannel){
+         channel = WorldChannels.currentChannel.get(player.getName());
       }
-      // Grab list
-      final Set<String> worldList = plugin.getConfigHandler().getWorldChannels(
-            worldName);
-      // Check if empty. If empty, we don't add any other world checks
-      if(!worldList.isEmpty()){
-         for(String name : worldList){
-            final World world = plugin.getServer().getWorld(name);
-            if(world == null){
-               continue;
+      if(channel == null){
+         // Grab default of the world
+         channel = config.getDefaultChannel();
+      }
+      handleChatEvent(event, config, channel);
+   }
+
+   private void handleChatEvent(final PlayerChatEvent event, WorldConfig config, Channel channel){
+      // Grab player
+      final Player player = event.getPlayer();
+      // Get world name
+      final String worldName = event.getPlayer().getWorld().getName();
+      Set<Player> receivers = new HashSet<Player>();
+      if(channel.includeWorldPlayers()){
+         // Add people of the original world
+         receivers.addAll(event.getPlayer().getWorld().getPlayers());
+      }
+      // Add all listeners from each linked channel
+      for(Channel linked : channel.getRecievingChannels()){
+         for(String name : linked.getListeners()){
+            final Player linkedReceiver = plugin.getServer().getPlayer(name);
+            if(linkedReceiver != null){
+               receivers.add(linkedReceiver);
             }
-            receivers.addAll(world.getPlayers());
          }
       }
       // Check if we're going to use local
-      if(config.useLocal()){
+      if(channel.isLocal()){
          final List<Entity> entities = player.getNearbyEntities(
-               config.getLocalRadius(), config.getLocalRadius(),
-               config.getLocalRadius());
+               channel.getRadius(), channel.getRadius(), channel.getRadius());
          for(Entity entity : entities){
             if(entity instanceof Player){
                receivers.add((Player) entity);
@@ -95,7 +147,7 @@ public class WChatListener implements Listener{
       // Add player to receivers by default
       receivers.add(player);
       // Add observers
-      for(String observer : WorldChannels.observers){
+      for(String observer : channel.getObservers()){
          final Player playerObserver = plugin.getServer().getPlayer(observer);
          if(playerObserver != null && playerObserver.isOnline()){
             receivers.add(playerObserver);
@@ -124,13 +176,11 @@ public class WChatListener implements Listener{
          group = plugin.getChat().getPlayerGroups(player)[0];
       }catch(ArrayIndexOutOfBoundsException a){
          // IGNORE
-      }
-      catch(NullPointerException npe)
-      {
+      }catch(NullPointerException npe){
          group = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve group name!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve group name!");
          }
       }
       info.put(Field.GROUP, group);
@@ -139,9 +189,9 @@ public class WChatListener implements Listener{
          prefix = plugin.getChat().getPlayerPrefix(worldName, player.getName());
       }catch(NullPointerException npe){
          prefix = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve prefix!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve prefix!");
          }
       }
       info.put(Field.PREFIX, prefix);
@@ -150,15 +200,20 @@ public class WChatListener implements Listener{
          suffix = plugin.getChat().getPlayerSuffix(worldName, player.getName());
       }catch(NullPointerException npe){
          suffix = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve suffix!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve suffix!");
          }
       }
       info.put(Field.SUFFIX, suffix);
       info.put(Field.MESSAGE, "%2\\$s");
       // Check if we are going to edit the format at all
-      if(config.useFormatter()){
+      if(channel.isFormat()){
+         final String format = channel.getFormatterString();
+         if(!format.equals("")){
+            event.setFormat(WChat.parseString(format, info));
+         }
+      }else if(config.useFormatter()){
          final String format = config.getFormat();
          if(!format.equals("")){
             event.setFormat(WChat.parseString(format, info));

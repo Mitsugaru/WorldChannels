@@ -1,7 +1,6 @@
 package com.mitsugaru.WorldChannels;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.milkbowl.vault.chat.Chat;
 
@@ -10,18 +9,19 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mitsugaru.WorldChannels.channels.Channel;
 import com.mitsugaru.WorldChannels.config.ConfigHandler;
 import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 import com.mitsugaru.WorldChannels.events.WCPlayerListener;
 import com.mitsugaru.WorldChannels.events.WChatListener;
 import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
+import com.mitsugaru.WorldChannels.tasks.PlayerChangedWorldTask;
 
 public class WorldChannels extends JavaPlugin{
    private Chat chat = null;
    public static final String TAG = "[WorldChannels]";
    private ConfigHandler configHandler;
-   public static final Set<String> observers = new HashSet<String>();
-   public static final Set<String> mcmmoChat = new HashSet<String>();
+   public static final ConcurrentHashMap<String, Channel> currentChannel = new ConcurrentHashMap<String, Channel>();
 
    /**
     * Method that is called when plugin is enabled
@@ -49,7 +49,9 @@ public class WorldChannels extends JavaPlugin{
       // Setup listeners
       final PluginManager pm = this.getServer().getPluginManager();
       pm.registerEvents(new WChatListener(this), this);
-      pm.registerEvents(new WCPlayerListener(), this);
+      pm.registerEvents(new WCPlayerListener(this), this);
+      //Setup tasks
+      this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerChangedWorldTask(this), 600, 600);
    }
 
    public ConfigHandler getConfigHandler(){
