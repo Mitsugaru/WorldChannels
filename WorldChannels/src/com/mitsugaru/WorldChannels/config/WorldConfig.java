@@ -28,8 +28,7 @@ public class WorldConfig{
    private boolean formatterUse, announcerUse, nobodyUse;
    private static final int minutesToTicks = 1200;
    private int announcerInterval = 15, announcerId = -1;
-   private List<String> announcements = new ArrayList<String>(),
-         broadcastWorlds = new ArrayList<String>();
+   private List<String> announcements = new ArrayList<String>();
    private Map<String, Channel> channels = new HashMap<String, Channel>();
    private Channel defaultChannel;
 
@@ -130,10 +129,6 @@ public class WorldConfig{
       }
       if(announcements == null){
          announcements = new ArrayList<String>();
-      }
-      broadcastWorlds = config.getStringList("broadcastToWorlds");
-      if(broadcastWorlds == null){
-         broadcastWorlds = new ArrayList<String>();
       }
       // Check default channel
       if(defaultChannel == null){
@@ -309,10 +304,6 @@ public class WorldConfig{
 
    public Channel getDefaultChannel(){
       return defaultChannel;
-   }
-
-   public List<String> getWorldList(){
-      return broadcastWorlds;
    }
 
    public String getWorldName(){
