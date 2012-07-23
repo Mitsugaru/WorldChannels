@@ -52,8 +52,16 @@ public class PlayerChangedWorldTask implements Runnable{
                }
             }
             // Grab world config
-            final WorldConfig conf = plugin.getConfigHandler().getWorldConfig(
-                  entry.getValue());
+            WorldConfig conf;
+            if(entry.getValue() == null){
+               conf = plugin.getConfigHandler().getWorldConfig(
+                     plugin.getServer().getPlayer(entry.getKey()).getWorld()
+                           .getName());
+            }else{
+               conf = plugin.getConfigHandler()
+                     .getWorldConfig(entry.getValue());
+            }
+
             // Grab all autojoin channels of world and add them as a listener
             for(Channel channel : conf.getChannels()){
                if(channel.isAutoJoin()){
