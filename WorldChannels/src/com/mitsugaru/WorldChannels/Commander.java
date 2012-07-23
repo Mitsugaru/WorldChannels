@@ -1,6 +1,10 @@
 package com.mitsugaru.WorldChannels;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,6 +24,9 @@ public class Commander implements CommandExecutor{
    private final WorldChannels plugin;
    private final ConfigHandler configHandler;
    private final static String bar = "======================";
+   private final static int LIST_LIMIT = 8;
+   public static final Map<String, Integer> page = new HashMap<String, Integer>();
+   public static final Map<String, String> pageWorld = new HashMap<String, String>();
    private long time;
 
    public Commander(WorldChannels plugin){
@@ -122,10 +129,12 @@ public class Commander implements CommandExecutor{
                      if(channel != null){
                         if(channel.getObservers().contains(sender.getName())){
                            channel.removeObserver(sender.getName());
-                           sender.sendMessage(LocalString.OBSERVER_OFF.parseString(info));
+                           sender.sendMessage(LocalString.OBSERVER_OFF
+                                 .parseString(info));
                         }else{
                            channel.addObserver(sender.getName());
-                           sender.sendMessage(LocalString.OBSERVER_ON.parseString(info));
+                           sender.sendMessage(LocalString.OBSERVER_ON
+                                 .parseString(info));
                         }
                      }else{
                         info.put(Flag.EXTRA, wc);
@@ -135,34 +144,38 @@ public class Commander implements CommandExecutor{
                   }else{
                      // check local world
                      boolean found = false;
-                     final String worldName = ((Player) sender).getWorld().getName();
+                     final String worldName = ((Player) sender).getWorld()
+                           .getName();
                      final WorldConfig conf = configHandler
                            .getWorldConfig(worldName);
                      Channel channel = conf.getChannel(wc);
-                     if(channel != null)
-                     {
+                     if(channel != null){
                         found = true;
                         if(channel.getObservers().contains(sender.getName())){
                            channel.removeObserver(sender.getName());
-                           sender.sendMessage(LocalString.OBSERVER_OFF.parseString(info));
+                           sender.sendMessage(LocalString.OBSERVER_OFF
+                                 .parseString(info));
                         }else{
                            channel.addObserver(sender.getName());
-                           sender.sendMessage(LocalString.OBSERVER_ON.parseString(info));
+                           sender.sendMessage(LocalString.OBSERVER_ON
+                                 .parseString(info));
                         }
                      }
                      if(!found){
                         // check global channels
-                        for(Channel globalChannel : configHandler.getGlobalChannels())
-                        {
-                           if(globalChannel.getName().equalsIgnoreCase(wc))
-                           {
-                              if(globalChannel.getObservers().contains(sender.getName())){
+                        for(Channel globalChannel : configHandler
+                              .getGlobalChannels()){
+                           if(globalChannel.getName().equalsIgnoreCase(wc)){
+                              if(globalChannel.getObservers().contains(
+                                    sender.getName())){
                                  globalChannel.removeObserver(sender.getName());
-                                 sender.sendMessage(LocalString.OBSERVER_OFF.parseString(info));
+                                 sender.sendMessage(LocalString.OBSERVER_OFF
+                                       .parseString(info));
                                  break;
                               }else{
                                  globalChannel.addObserver(sender.getName());
-                                 sender.sendMessage(LocalString.OBSERVER_ON.parseString(info));
+                                 sender.sendMessage(LocalString.OBSERVER_ON
+                                       .parseString(info));
                                  break;
                               }
                            }
@@ -175,7 +188,34 @@ public class Commander implements CommandExecutor{
                      PermissionNode.OBSERVE.getNode());
                sender.sendMessage(LocalString.PERMISSION_DENY.parseString(info));
             }
-         }else{
+         }else if(com.equals("list")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               String world = ((Player) sender).getWorld().getName();
+               try{
+                  world = args[1];
+               }catch(ArrayIndexOutOfBoundsException e){
+                  // Ignore
+               }
+               pageWorld.put(sender.getName(), world);
+               listChannels(sender, world, 0, info);
+            }
+         }else if(com.equals("next")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               listChannels(sender, pageWorld.get(sender.getName()), 0, info);
+            }
+         }else if(com.equals("prev")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               listChannels(sender, pageWorld.get(sender.getName()), 0, info);
+            }
+         }
+
+         else{
             info.put(LocalString.Flag.EXTRA, com);
             sender.sendMessage(LocalString.UNKNOWN_COMMAND.parseString(info));
          }
@@ -221,6 +261,55 @@ public class Commander implements CommandExecutor{
          sender.sendMessage(LocalString.HELP_OBSERVE.parseString(null));
       }
       sender.sendMessage(LocalString.HELP_VERSION.parseString(null));
+   }
+
+   private void listChannels(CommandSender sender, String world,
+         int pageAdjust, EnumMap<LocalString.Flag, String> info){
+      if(!page.containsKey(sender.getName())){
+         page.put(sender.getName(), 0);
+      }else if(pageAdjust != 0){
+         page.put(sender.getName(), page.get(sender.getName()) + pageAdjust);
+      }
+      List<Channel> hold = new ArrayList<Channel>();
+      hold.addAll(configHandler.getGlobalChannels());
+      try{
+         hold.addAll(configHandler.getWorldConfig(world).getChannels());
+      }catch(IllegalArgumentException e){
+         // Ignore
+         info.put(Flag.EXTRA, world);
+         sender.sendMessage(LocalString.UNKNOWN_WORLD.parseString(info));
+      }
+      if(hold.isEmpty()){
+         // notify player that there are no available channels... somehow.
+         sender.sendMessage(ChatColor.YELLOW + WorldChannels.TAG
+               + " No channels...");
+         return;
+      }
+      Channel[] list = hold.toArray(new Channel[0]);
+      for(int i = (page.get(sender.getName()).intValue() * LIST_LIMIT); i < (page
+            .get(sender.getName()).intValue() * LIST_LIMIT + LIST_LIMIT); i++){
+         if(i < list.length){
+            if(list[i].getListeners().contains(sender.getName())){
+               // They are a listener
+               sender.sendMessage(ChatColor.GREEN + "#" + list[i].getTag()
+                     + " | " + list[i].getName());
+            }else if(list[i].getObservers().contains(sender.getName())){
+               // They are an observer
+               sender.sendMessage(ChatColor.GOLD + "#" + list[i].getTag()
+                     + " | " + list[i].getName());
+            }else if(list[i].getMuted().contains(sender.getName())){
+               // They are muted
+               sender.sendMessage(ChatColor.RED + "#" + list[i].getTag()
+                     + " | " + list[i].getName());
+            }else{
+               // They are not a part of the channel
+               sender.sendMessage(ChatColor.GRAY + "#" + list[i].getTag()
+                     + " | " + list[i].getName());
+            }
+         }else{
+            break;
+         }
+      }
    }
 
 }

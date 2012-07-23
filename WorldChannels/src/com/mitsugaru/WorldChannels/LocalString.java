@@ -17,7 +17,9 @@ public enum LocalString {
    OBSERVER_ON(LocalizeConfig.observerOn),
    OBSERVER_OFF(LocalizeConfig.observerOff),
    NO_CONSOLE(LocalizeConfig.noConsole),
-   MISSING_CHANNEL(LocalizeConfig.missingParam), UNKNOWN_CHANNEL(LocalizeConfig.unknownChannel);
+   MISSING_CHANNEL(LocalizeConfig.missingParam),
+   UNKNOWN_CHANNEL(LocalizeConfig.unknownChannel),
+   UNKNOWN_WORLD(LocalizeConfig.unknownWorld);
 
    private String string;
 
