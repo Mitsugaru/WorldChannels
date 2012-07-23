@@ -52,7 +52,7 @@ public class WorldChannels extends JavaPlugin{
       pm.registerEvents(new WChatListener(this), this);
       pm.registerEvents(new WCPlayerListener(this), this);
       //Setup tasks
-      this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerChangedWorldTask(this), 600, 600);
+      this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerChangedWorldTask(this), 100, 100);
    }
 
    public ConfigHandler getConfigHandler(){
