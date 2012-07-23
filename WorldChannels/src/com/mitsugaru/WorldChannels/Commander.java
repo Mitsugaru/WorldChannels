@@ -223,6 +223,7 @@ public class Commander implements CommandExecutor{
                   if(channel != null){
                      if(PermissionHandler.checkPermission(sender,
                            channel.getPermissionJoin())){
+                        // FIXME
                         channel.addListener(sender.getName());
                         synchronized (WorldChannels.currentChannel){
                            WorldChannels.currentChannel.put(sender.getName(),
@@ -256,6 +257,7 @@ public class Commander implements CommandExecutor{
                   if(channel != null){
                      if(PermissionHandler.checkPermission(sender,
                            channel.getPermissionLeave())){
+                        // FIXME
                         channel.removeListener(sender.getName());
                         synchronized (WorldChannels.currentChannel){
                            if(WorldChannels.currentChannel
