@@ -79,7 +79,6 @@ public class WChatListener implements Listener{
       if(ours){
          // Handle text to channel recepients
          handleChatEvent(event, conf, target);
-         event.setCancelled(true);
       }
    }
 
@@ -95,6 +94,10 @@ public class WChatListener implements Listener{
    public void chatEvent(final PlayerChatEvent event){
       // Don't care about event if it is cancelled
       if(event.isCancelled() || event.getPlayer() == null){
+         return;
+      }
+      if(event.getMessage().charAt(0) == '#'){
+         //Ignore, as we handled it earlier
          return;
       }
       // Grab player
