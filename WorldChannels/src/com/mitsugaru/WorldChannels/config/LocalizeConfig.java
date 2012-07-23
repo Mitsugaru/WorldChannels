@@ -104,6 +104,8 @@ public class LocalizeConfig{
             "&a%tag Cannot use this command as console");
       missingParam = config.getString("message.missingParam",
             "&a%tag Missing %extra parameter");
+      unknown = config.getString("message.unknown",
+            "&c%tag Unknown %reason '&6%extra&c'");
       /**
        * help
        */
