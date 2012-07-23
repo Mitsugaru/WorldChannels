@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,7 +34,8 @@ public class WChatListener implements Listener{
    /**
     * Handle hashtag quick message events
     * 
-    * @param event - PlayerChatEvent that occurred
+    * @param event
+    *           - PlayerChatEvent that occurred
     */
    @EventHandler(priority = EventPriority.LOWEST)
    public void hashMessage(final PlayerChatEvent event){
@@ -51,8 +53,14 @@ public class WChatListener implements Listener{
       Channel target = null;
       final String userTag = event.getMessage().split(" ")[0].replace("#", "");
       // Check world channels
-      final WorldConfig conf = configHandler.getWorldConfig(event.getPlayer()
-            .getWorld().getName());
+      WorldConfig conf;
+      try{
+         conf = configHandler.getWorldConfig(event.getPlayer().getWorld()
+               .getName());
+      }catch(IllegalArgumentException e){
+         plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
+         return;
+      }
       for(Channel channel : conf.getChannels()){
          if(channel.getTag().equalsIgnoreCase(userTag)){
             ours = true;
@@ -80,7 +88,8 @@ public class WChatListener implements Listener{
     * so that other chat plugins can do what they need to do to the
     * message/format.
     * 
-    * @param event - PlayerChatEvent that occurred
+    * @param event
+    *           - PlayerChatEvent that occurred
     */
    @EventHandler(priority = EventPriority.HIGHEST)
    public void chatEvent(final PlayerChatEvent event){
@@ -96,8 +105,13 @@ public class WChatListener implements Listener{
       // Get world name
       final String worldName = event.getPlayer().getWorld().getName();
       // Grab world specific config
-      final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
-            worldName);
+      WorldConfig config;
+      try{
+         config = plugin.getConfigHandler().getWorldConfig(worldName);
+      }catch(IllegalArgumentException e){
+         plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
+         return;
+      }
       Channel channel = null;
       synchronized (WorldChannels.currentChannel){
          channel = WorldChannels.currentChannel.get(player.getName());
@@ -109,7 +123,8 @@ public class WChatListener implements Listener{
       handleChatEvent(event, config, channel);
    }
 
-   private void handleChatEvent(final PlayerChatEvent event, WorldConfig config, Channel channel){
+   private void handleChatEvent(final PlayerChatEvent event,
+         WorldConfig config, Channel channel){
       // Grab player
       final Player player = event.getPlayer();
       // Get world name

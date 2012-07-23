@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -27,10 +28,9 @@ public class ConfigHandler{
    public ConfigHandler(WorldChannels plugin){
       this.plugin = plugin;
    }
-   
-   public void init()
-   {
-   // Load defaults
+
+   public void init(){
+      // Load defaults
       final ConfigurationSection config = plugin.getConfig();
       // LinkedHashmap of defaults
       final Map<String, Object> defaults = new LinkedHashMap<String, Object>();
@@ -120,11 +120,12 @@ public class ConfigHandler{
       }
    }
 
-   public WorldConfig getWorldConfig(String worldName){
+   public WorldConfig getWorldConfig(String worldName)
+         throws IllegalArgumentException{
       WorldConfig out = configs.get(worldName);
       if(out == null){
-         out = new WorldConfig(plugin, worldName);
-         configs.put(worldName, out);
+         throw new IllegalArgumentException("Missing configuration for world: "
+               + worldName);
       }
       return out;
    }
@@ -231,8 +232,14 @@ public class ConfigHandler{
             if(link.contains(":")){
                final String[] split = link.split(":");
                // Other world
-               final WorldConfig otherWorld = plugin.getConfigHandler()
-                     .getWorldConfig(split[0]);
+               WorldConfig otherWorld;
+               try{
+                  otherWorld = plugin.getConfigHandler().getWorldConfig(
+                        split[0]);
+               }catch(IllegalArgumentException e){
+                  plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
+                  continue;
+               }
                if(otherWorld != null){
                   final Channel otherChannel = otherWorld.getChannel(split[1]);
                   if(otherChannel != null){

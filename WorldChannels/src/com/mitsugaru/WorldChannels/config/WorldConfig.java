@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -265,8 +266,14 @@ public class WorldConfig{
             if(link.contains(":")){
                final String[] split = link.split(":");
                // Other world
-               final WorldConfig otherWorld = plugin.getConfigHandler()
-                     .getWorldConfig(split[0]);
+               WorldConfig otherWorld;
+               try{
+                  otherWorld = plugin.getConfigHandler().getWorldConfig(
+                        split[0]);
+               }catch(IllegalArgumentException e){
+                  plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
+                  continue;
+               }
                if(otherWorld != null){
                   final Channel otherChannel = otherWorld.getChannel(split[1]);
                   if(otherChannel != null){
