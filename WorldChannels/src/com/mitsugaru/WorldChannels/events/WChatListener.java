@@ -77,6 +77,8 @@ public class WChatListener implements Listener{
          }
       }
       if(ours){
+         event.setMessage(event.getMessage().replace(
+               event.getMessage().split(" ")[0], ""));
          // Handle text to channel recepients
          handleChatEvent(event, conf, target);
       }
