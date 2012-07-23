@@ -228,6 +228,8 @@ public class Commander implements CommandExecutor{
                            WorldChannels.currentChannel.put(sender.getName(),
                                  channel);
                         }
+                        sender.sendMessage(ChatColor.GREEN + WorldChannels.TAG
+                              + " Joined channel '" + channel.getName() + "'");
                      }else{
                         info.put(Flag.EXTRA, channel.getPermissionJoin());
                         sender.sendMessage(LocalString.PERMISSION_DENY
@@ -262,6 +264,8 @@ public class Commander implements CommandExecutor{
                                     .getName());
                            }
                         }
+                        sender.sendMessage(ChatColor.GREEN + WorldChannels.TAG
+                              + " Left channel '" + channel.getName() + "'");
                      }else{
                         info.put(Flag.EXTRA, channel.getPermissionLeave());
                         sender.sendMessage(LocalString.PERMISSION_DENY
@@ -306,6 +310,10 @@ public class Commander implements CommandExecutor{
                                     + " You have been kicked from channel '"
                                     + channel.getName() + "' by "
                                     + sender.getName());
+                              sender.sendMessage(ChatColor.GREEN
+                                    + WorldChannels.TAG + " Kicked "
+                                    + target.getName() + " from channel "
+                                    + channel.getName());
                            }else{
                               info.put(Flag.EXTRA, channel.getPermissionKick());
                               sender.sendMessage(LocalString.PERMISSION_DENY
@@ -348,15 +356,72 @@ public class Commander implements CommandExecutor{
                      if(target != null){
                         if(channel != null){
                            if(PermissionHandler.checkPermission(sender,
-                                 channel.getPermissionKick())){
+                                 channel.getPermissionMute())){
                               channel.addMutedPlayer(target.getName());
                               target.sendMessage(ChatColor.RED
                                     + WorldChannels.TAG
                                     + " You have been muted in channel '"
                                     + channel.getName() + "' by "
                                     + sender.getName());
+                              sender.sendMessage(ChatColor.GREEN
+                                    + WorldChannels.TAG + " Muted "
+                                    + target.getName() + " in channel "
+                                    + channel.getName());
                            }else{
-                              info.put(Flag.EXTRA, channel.getPermissionKick());
+                              info.put(Flag.EXTRA, channel.getPermissionMute());
+                              sender.sendMessage(LocalString.PERMISSION_DENY
+                                    .parseString(info));
+                           }
+                        }else{
+                           info.put(Flag.EXTRA, args[1]);
+                           info.put(Flag.REASON, "channel");
+                           sender.sendMessage(LocalString.UNKNOWN
+                                 .parseString(info));
+                        }
+                     }else{
+                        info.put(Flag.EXTRA, args[2]);
+                        info.put(Flag.REASON, "player");
+                        sender.sendMessage(LocalString.UNKNOWN
+                              .parseString(info));
+                     }
+                  }else{
+                     info.put(Flag.EXTRA, args[2]);
+                     info.put(Flag.REASON, "player");
+                     sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                  }
+
+               }catch(ArrayIndexOutOfBoundsException e){
+                  info.put(Flag.EXTRA, "channel name");
+                  sender.sendMessage(LocalString.MISSING_PARAM
+                        .parseString(info));
+               }
+            }
+         }else if(com.equals("unmute")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               try{
+                  final Channel channel = parseChannel(sender, args[1]);
+                  final String playerName = expandName(args[2]);
+                  if(playerName != null){
+                     final Player target = plugin.getServer().getPlayer(
+                           playerName);
+                     if(target != null){
+                        if(channel != null){
+                           if(PermissionHandler.checkPermission(sender,
+                                 channel.getPermissionMute())){
+                              channel.removeMutedPlayer(target.getName());
+                              target.sendMessage(ChatColor.YELLOW
+                                    + WorldChannels.TAG
+                                    + " You have been unmuted in channel '"
+                                    + channel.getName() + "' by "
+                                    + sender.getName());
+                              sender.sendMessage(ChatColor.GREEN
+                                    + WorldChannels.TAG + " Unmuted "
+                                    + target.getName() + " in channel "
+                                    + channel.getName());
+                           }else{
+                              info.put(Flag.EXTRA, channel.getPermissionMute());
                               sender.sendMessage(LocalString.PERMISSION_DENY
                                     .parseString(info));
                            }
