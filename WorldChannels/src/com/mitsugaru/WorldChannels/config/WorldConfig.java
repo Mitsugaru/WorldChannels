@@ -22,7 +22,7 @@ import com.mitsugaru.WorldChannels.channels.Channel;
 import com.mitsugaru.WorldChannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig{
-   private String worldName, formatterString, nobodyString, channelTag;
+   private String worldName, formatterString, nobodyString;
    private WorldChannels plugin;
    private File file;
    private YamlConfiguration config;
@@ -121,7 +121,6 @@ public class WorldConfig{
       nobodyUse = config.getBoolean("nobody.use", false);
       nobodyString = config.getString("nobody.message",
             "&oNo one can hear you...");
-      channelTag = config.getString("tag", "");
    }
 
    private void boundsCheck(){
@@ -170,7 +169,13 @@ public class WorldConfig{
          return;
       }
       for(String channelName : section.getKeys(false)){
-         final String tag = section.getString(channelName + ".tag", channelTag);
+         final String tag = section.getString(channelName + ".tag");
+         if(tag == null){
+            plugin.getLogger().warning(
+                  "Missing tag for channel '" + channelName + "' in world '"
+                        + worldName + "'");
+            continue;
+         }
          final Channel channel = new Channel(tag, channelName, worldName);
          /**
           * get channel settings
