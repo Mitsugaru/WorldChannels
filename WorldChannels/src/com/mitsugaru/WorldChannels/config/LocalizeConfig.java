@@ -17,10 +17,9 @@ public class LocalizeConfig{
    private static WorldChannels plugin;
    private static File file;
    private static YamlConfiguration config;
-   public static String permissionDeny, unknownCommand, helpHelp,
-         helpAdminReload, helpVersion, reloadConfig, helpShout, helpObserve,
-         observerOn, observerOff, noConsole, missingParam, unknownChannel,
-         unknownWorld;
+   public static String permissionDeny, unknown, helpHelp, helpAdminReload,
+         helpVersion, reloadConfig, helpShout, helpObserve, observerOn,
+         observerOff, noConsole, missingParam;
 
    public static void init(WorldChannels wc){
       plugin = wc;
@@ -65,12 +64,10 @@ public class LocalizeConfig{
       defaults.put("message.observer.off", "&a%tag Observer mode off");
       defaults.put("message.noPermission", "&c%tag Lack permission: %extra");
       defaults.put("message.reloadConfig", "&a%tag &fConfig reloaded.");
-      defaults.put("message.unknownCommand",
-            "&c%tag Unknown command '&6%extra&c'. Bad syntax.");
+      defaults.put("message.unknown", "&c%tag Unknown %reason '&6%extra&c'");
       defaults.put("message.noConsole",
             "&a%tag Cannot use this command as console");
-      defaults.put("message.missingParam", "&a%tag Missing %extra parameter");
-      defaults.put("message.unknownChannel", "&a%tag Unknown channel %extra");
+      defaults.put("message.missingParam", "&a%tag Missing parameter: %extra");
       defaults.put("help.help", "&a/wc help&e : Show help menu");
       defaults.put("help.shout", "&a/wc shout <message...>&e : Shout message");
       defaults.put("help.observe", "&a/wc observe &e: Toggle observe mode");
@@ -107,10 +104,6 @@ public class LocalizeConfig{
             "&a%tag Cannot use this command as console");
       missingParam = config.getString("message.missingParam",
             "&a%tag Missing %extra parameter");
-      unknownChannel = config.getString("message.unknownChannel",
-            "&a%tag Unknown channel %extra");
-      unknownWorld = config.getString("message.unknownWorld",
-            "&a%tag Unknown world %extra");
       /**
        * help
        */

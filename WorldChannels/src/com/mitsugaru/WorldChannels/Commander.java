@@ -114,7 +114,7 @@ public class Commander implements CommandExecutor{
                if(args.length < 2){
                   // did not specify a channel
                   info.put(Flag.EXTRA, "channel");
-                  sender.sendMessage(LocalString.MISSING_CHANNEL
+                  sender.sendMessage(LocalString.MISSING_PARAM
                         .parseString(info));
                }else{
                   final String wc = args[1].toLowerCase();
@@ -138,7 +138,8 @@ public class Commander implements CommandExecutor{
                         }
                      }else{
                         info.put(Flag.EXTRA, wc);
-                        sender.sendMessage(LocalString.UNKNOWN_CHANNEL
+                        info.put(Flag.REASON, "channel");
+                        sender.sendMessage(LocalString.UNKNOWN
                               .parseString(info));
                      }
                   }else{
@@ -213,17 +214,212 @@ public class Commander implements CommandExecutor{
             }else{
                listChannels(sender, pageWorld.get(sender.getName()), 0, info);
             }
-         }
+         }else if(com.equals("join")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               try{
+                  final Channel channel = parseChannel(sender, args[1]);
+                  if(channel != null){
+                     if(PermissionHandler.checkPermission(sender,
+                           channel.getPermissionJoin())){
+                        channel.addListener(sender.getName());
+                        synchronized (WorldChannels.currentChannel){
+                           WorldChannels.currentChannel.put(sender.getName(),
+                                 channel);
+                        }
+                     }else{
+                        info.put(Flag.EXTRA, channel.getPermissionJoin());
+                        sender.sendMessage(LocalString.PERMISSION_DENY
+                              .parseString(info));
+                     }
+                  }else{
+                     info.put(Flag.EXTRA, args[1]);
+                     info.put(Flag.REASON, "channel");
+                     sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                  }
 
-         else{
+               }catch(ArrayIndexOutOfBoundsException e){
+                  info.put(Flag.EXTRA, "channel");
+                  sender.sendMessage(LocalString.MISSING_PARAM
+                        .parseString(info));
+               }
+            }
+         }else if(com.equals("leave")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               try{
+                  final Channel channel = parseChannel(sender, args[1]);
+                  if(channel != null){
+                     if(PermissionHandler.checkPermission(sender,
+                           channel.getPermissionLeave())){
+                        channel.removeListener(sender.getName());
+                        synchronized (WorldChannels.currentChannel){
+                           if(WorldChannels.currentChannel
+                                 .get(sender.getName()).equals(channel)){
+                              WorldChannels.currentChannel.remove(sender
+                                    .getName());
+                           }
+                        }
+                     }else{
+                        info.put(Flag.EXTRA, channel.getPermissionLeave());
+                        sender.sendMessage(LocalString.PERMISSION_DENY
+                              .parseString(info));
+                     }
+                  }else{
+                     info.put(Flag.EXTRA, args[1]);
+                     info.put(Flag.REASON, "channel");
+                     sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                  }
+
+               }catch(ArrayIndexOutOfBoundsException e){
+                  info.put(Flag.EXTRA, "channel");
+                  sender.sendMessage(LocalString.MISSING_PARAM
+                        .parseString(info));
+               }
+            }
+         }else if(com.equals("kick")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               try{
+                  final Channel channel = parseChannel(sender, args[1]);
+                  final String playerName = expandName(args[2]);
+                  if(playerName != null){
+                     final Player target = plugin.getServer().getPlayer(
+                           playerName);
+                     if(target != null){
+                        if(channel != null){
+                           if(PermissionHandler.checkPermission(sender,
+                                 channel.getPermissionKick())){
+                              channel.removeListener(target.getName());
+                              synchronized (WorldChannels.currentChannel){
+                                 if(WorldChannels.currentChannel.get(
+                                       target.getName()).equals(channel)){
+                                    WorldChannels.currentChannel.remove(target
+                                          .getName());
+                                 }
+                              }
+                              target.sendMessage(ChatColor.RED
+                                    + WorldChannels.TAG
+                                    + " You have been kicked from channel '"
+                                    + channel.getName() + "' by "
+                                    + sender.getName());
+                           }else{
+                              info.put(Flag.EXTRA, channel.getPermissionKick());
+                              sender.sendMessage(LocalString.PERMISSION_DENY
+                                    .parseString(info));
+                           }
+                        }else{
+                           info.put(Flag.EXTRA, args[1]);
+                           info.put(Flag.REASON, "channel");
+                           sender.sendMessage(LocalString.UNKNOWN
+                                 .parseString(info));
+                        }
+                     }else{
+                        info.put(Flag.EXTRA, args[2]);
+                        info.put(Flag.REASON, "player");
+                        sender.sendMessage(LocalString.UNKNOWN
+                              .parseString(info));
+                     }
+                  }else{
+                     info.put(Flag.EXTRA, args[2]);
+                     info.put(Flag.REASON, "player");
+                     sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                  }
+
+               }catch(ArrayIndexOutOfBoundsException e){
+                  info.put(Flag.EXTRA, "channel name");
+                  sender.sendMessage(LocalString.MISSING_PARAM
+                        .parseString(info));
+               }
+            }
+         }else if(com.equals("mute")){
+            if(!(sender instanceof Player)){
+               sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+            }else{
+               try{
+                  final Channel channel = parseChannel(sender, args[1]);
+                  final String playerName = expandName(args[2]);
+                  if(playerName != null){
+                     final Player target = plugin.getServer().getPlayer(
+                           playerName);
+                     if(target != null){
+                        if(channel != null){
+                           if(PermissionHandler.checkPermission(sender,
+                                 channel.getPermissionKick())){
+                              channel.addMutedPlayer(target.getName());
+                              target.sendMessage(ChatColor.RED
+                                    + WorldChannels.TAG
+                                    + " You have been muted in channel '"
+                                    + channel.getName() + "' by "
+                                    + sender.getName());
+                           }else{
+                              info.put(Flag.EXTRA, channel.getPermissionKick());
+                              sender.sendMessage(LocalString.PERMISSION_DENY
+                                    .parseString(info));
+                           }
+                        }else{
+                           info.put(Flag.EXTRA, args[1]);
+                           info.put(Flag.REASON, "channel");
+                           sender.sendMessage(LocalString.UNKNOWN
+                                 .parseString(info));
+                        }
+                     }else{
+                        info.put(Flag.EXTRA, args[2]);
+                        info.put(Flag.REASON, "player");
+                        sender.sendMessage(LocalString.UNKNOWN
+                              .parseString(info));
+                     }
+                  }else{
+                     info.put(Flag.EXTRA, args[2]);
+                     info.put(Flag.REASON, "player");
+                     sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                  }
+
+               }catch(ArrayIndexOutOfBoundsException e){
+                  info.put(Flag.EXTRA, "channel name");
+                  sender.sendMessage(LocalString.MISSING_PARAM
+                        .parseString(info));
+               }
+            }
+         }else{
             info.put(LocalString.Flag.EXTRA, com);
-            sender.sendMessage(LocalString.UNKNOWN_COMMAND.parseString(info));
+            info.put(Flag.REASON, "command");
+            sender.sendMessage(LocalString.UNKNOWN.parseString(info));
          }
       }
       if(configHandler.debugTime){
          debugTime(sender, time);
       }
       return true;
+   }
+
+   private Channel parseChannel(CommandSender sender, String param){
+      Channel channel = null;
+      if(param.contains(":")){
+         final String[] split = param.split(":");
+         // parse for world
+         final String worldName = split[0];
+         final String channelName = split[1];
+         final WorldConfig conf = configHandler.getWorldConfig(worldName);
+         channel = conf.getChannel(channelName);
+      }else{
+         // try local
+         final WorldConfig conf = configHandler
+               .getWorldConfig(((Player) sender).getWorld().getName());
+         channel = conf.getChannel(param);
+         if(channel == null){
+            // try and get it from global
+            for(Channel c : configHandler.getGlobalChannels()){
+               if(c.getName().equalsIgnoreCase(param)){
+                  channel = c;
+               }
+            }
+         }
+      }
+      return channel;
    }
 
    private void debugTime(CommandSender sender, long time){
@@ -277,7 +473,8 @@ public class Commander implements CommandExecutor{
       }catch(IllegalArgumentException e){
          // Ignore
          info.put(Flag.EXTRA, world);
-         sender.sendMessage(LocalString.UNKNOWN_WORLD.parseString(info));
+         info.put(Flag.REASON, "world");
+         sender.sendMessage(LocalString.UNKNOWN.parseString(info));
       }
       if(hold.isEmpty()){
          // notify player that there are no available channels... somehow.
@@ -310,6 +507,35 @@ public class Commander implements CommandExecutor{
             break;
          }
       }
+   }
+
+   /**
+    * Attempts to look up full name based on who's on the server Given a partial
+    * name
+    * 
+    * @author Frigid, edited by Raphfrk and petteyg359
+    */
+   public String expandName(String Name){
+      int m = 0;
+      String Result = "";
+      for(int n = 0; n < plugin.getServer().getOnlinePlayers().length; n++){
+         String str = plugin.getServer().getOnlinePlayers()[n].getName();
+         if(str.matches("(?i).*" + Name + ".*")){
+            m++;
+            Result = str;
+            if(m == 2){
+               return null;
+            }
+         }
+         if(str.equalsIgnoreCase(Name))
+            return str;
+      }
+      if(m == 1)
+         return Result;
+      if(m > 1){
+         return null;
+      }
+      return Name;
    }
 
 }

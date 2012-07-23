@@ -97,7 +97,7 @@ public class WChatListener implements Listener{
          return;
       }
       if(event.getMessage().charAt(0) == '#'){
-         //Ignore, as we handled it earlier
+         // Ignore, as we handled it earlier
          return;
       }
       // Grab player
@@ -130,6 +130,13 @@ public class WChatListener implements Listener{
          WorldConfig config, Channel channel){
       // Grab player
       final Player player = event.getPlayer();
+      // Check mute
+      if(channel.getMuted().contains(player.getName())){
+         player.sendMessage("You are muted for channel '" + channel.getName()
+               + "' in world '" + config.getWorldName() + "'");
+         event.setCancelled(true);
+         return;
+      }
       // Get world name
       final String worldName = event.getPlayer().getWorld().getName();
       Set<Player> receivers = new HashSet<Player>();

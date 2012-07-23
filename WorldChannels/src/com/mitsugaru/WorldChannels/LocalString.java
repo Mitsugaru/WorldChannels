@@ -7,7 +7,7 @@ import com.mitsugaru.WorldChannels.config.LocalizeConfig;
 
 public enum LocalString {
    PERMISSION_DENY(LocalizeConfig.permissionDeny),
-   UNKNOWN_COMMAND(LocalizeConfig.unknownCommand),
+   UNKNOWN(LocalizeConfig.unknown),
    RELOAD_CONFIG(LocalizeConfig.reloadConfig),
    HELP_HELP(LocalizeConfig.helpHelp),
    HELP_VERSION(LocalizeConfig.helpVersion),
@@ -17,9 +17,7 @@ public enum LocalString {
    OBSERVER_ON(LocalizeConfig.observerOn),
    OBSERVER_OFF(LocalizeConfig.observerOff),
    NO_CONSOLE(LocalizeConfig.noConsole),
-   MISSING_CHANNEL(LocalizeConfig.missingParam),
-   UNKNOWN_CHANNEL(LocalizeConfig.unknownChannel),
-   UNKNOWN_WORLD(LocalizeConfig.unknownWorld);
+   MISSING_PARAM(LocalizeConfig.missingParam);
 
    private String string;
 
@@ -42,8 +40,7 @@ public enum LocalString {
       EVENT("%event"),
       REASON("%reason"),
       EXTRA("%extra"),
-      TAG("%tag"),
-      AMOUNT("%amount");
+      TAG("%tag");
 
       private String flag;
 
