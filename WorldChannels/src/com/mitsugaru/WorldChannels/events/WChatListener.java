@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.mitsugaru.WorldChannels.WChat;
 import com.mitsugaru.WorldChannels.WChat.Field;
@@ -35,10 +35,10 @@ public class WChatListener implements Listener{
     * so that other chat plugins can do what they need to do to the
     * message/format.
     * 
-    * @param PlayerChatEvent
+    * @param AsyncPlayerChatEvent
     */
    @EventHandler(priority = EventPriority.HIGHEST)
-   public void chatEvent(final PlayerChatEvent event){
+   public void chatEvent(final AsyncPlayerChatEvent event){
       // Don't care about event if it is cancelled
       if(event.isCancelled() || event.getPlayer() == null){
          return;

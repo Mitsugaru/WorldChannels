@@ -1,7 +1,7 @@
 name: WorldChannels
 main: com.mitsugaru.WorldChannels.WorldChannels
 description: Plugin to support per world chat configuration.
-version: 0.141
+version: 0.142
 author: Mitsugaru
 depend: [Vault]
 
