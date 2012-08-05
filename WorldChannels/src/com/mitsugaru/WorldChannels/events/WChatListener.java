@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.mitsugaru.WorldChannels.WChat;
 import com.mitsugaru.WorldChannels.WChat.Field;
@@ -35,10 +35,10 @@ public class WChatListener implements Listener{
     * Handle hashtag quick message events
     * 
     * @param event
-    *           - PlayerChatEvent that occurred
+    *           - AsyncPlayerChatEvent that occurred
     */
    @EventHandler(priority = EventPriority.LOWEST)
-   public void hashMessage(final PlayerChatEvent event){
+   public void hashMessage(final AsyncPlayerChatEvent event){
       if(event.getPlayer() == null || event.getMessage() == null
             || !configHandler.hashQuickMessage || event.isCancelled()){
          return;
@@ -90,10 +90,10 @@ public class WChatListener implements Listener{
     * message/format.
     * 
     * @param event
-    *           - PlayerChatEvent that occurred
+    *           - AsyncPlayerChatEvent that occurred
     */
    @EventHandler(priority = EventPriority.HIGHEST)
-   public void chatEvent(final PlayerChatEvent event){
+   public void chatEvent(final AsyncPlayerChatEvent event){
       // Don't care about event if it is cancelled
       if(event.isCancelled() || event.getPlayer() == null){
          return;
@@ -128,7 +128,7 @@ public class WChatListener implements Listener{
       handleChatEvent(event, config, channel);
    }
 
-   private void handleChatEvent(final PlayerChatEvent event,
+   private void handleChatEvent(final AsyncPlayerChatEvent event,
          WorldConfig config, Channel channel){
       // Grab player
       final Player player = event.getPlayer();
