@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -54,13 +55,12 @@ public class WChatListener implements Listener{
       final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
             worldName);
 
-      Set<Player> receivers = null;
+      Set<Player> receivers = new HashSet<Player>();
       if(config.includeLocalPlayers()){
          // Add people of the original world
-         receivers = new HashSet<Player>(event.getPlayer().getWorld()
-               .getPlayers());
-      }else{
-         receivers = new HashSet<Player>();
+         final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
+         playerList.addAll(player.getWorld().getPlayers());
+         receivers.addAll(playerList);
       }
       // Grab list
       final Set<String> worldList = plugin.getConfigHandler().getWorldChannels(
@@ -72,15 +72,18 @@ public class WChatListener implements Listener{
             if(world == null){
                continue;
             }
-            receivers.addAll(world.getPlayers());
+            final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
+            playerList.addAll(player.getWorld().getPlayers());
+            receivers.addAll(playerList);
          }
       }
       // Check if we're going to use local
       if(config.useLocal()){
-         final List<Entity> entities = player.getNearbyEntities(
+         final CopyOnWriteArrayList<Entity> entityList = new CopyOnWriteArrayList<Entity>();
+         entityList.addAll(player.getNearbyEntities(
                config.getLocalRadius(), config.getLocalRadius(),
-               config.getLocalRadius());
-         for(Entity entity : entities){
+               config.getLocalRadius()));
+         for(Entity entity : entityList){
             if(entity instanceof Player){
                receivers.add((Player) entity);
             }
