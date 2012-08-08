@@ -2,9 +2,9 @@ package com.mitsugaru.WorldChannels.events;
 
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -110,13 +110,9 @@ public class WChatListener implements Listener{
       // Get world name
       final String worldName = event.getPlayer().getWorld().getName();
       // Grab world specific config
-      WorldConfig config;
-      try{
-         config = plugin.getConfigHandler().getWorldConfig(worldName);
-      }catch(IllegalArgumentException e){
-         plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
-         return;
-      }
+      final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
+            worldName);
+
       Channel channel = null;
       synchronized (WorldChannels.currentChannel){
          channel = WorldChannels.currentChannel.get(player.getName());
@@ -125,6 +121,15 @@ public class WChatListener implements Listener{
          // Grab default of the world
          channel = config.getDefaultChannel();
       }
+      
+      Set<Player> receivers = new HashSet<Player>();
+      if(channel.includeWorldPlayers()){
+         // Add people of the original world
+         final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
+         playerList.addAll(player.getWorld().getPlayers());
+         receivers.addAll(playerList);
+      }
+      
       handleChatEvent(event, config, channel);
    }
 
@@ -157,9 +162,11 @@ public class WChatListener implements Listener{
       }
       // Check if we're going to use local
       if(channel.isLocal()){
-         final List<Entity> entities = player.getNearbyEntities(
-               channel.getRadius(), channel.getRadius(), channel.getRadius());
-         for(Entity entity : entities){
+         final CopyOnWriteArrayList<Entity> entityList = new CopyOnWriteArrayList<Entity>();
+         entityList.addAll(player.getNearbyEntities(
+               channel.getRadius(), channel.getRadius(),
+               channel.getRadius()));
+         for(Entity entity : entityList){
             if(entity instanceof Player){
                receivers.add((Player) entity);
             }

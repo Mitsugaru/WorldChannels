@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mitsugaru</groupId>
   <artifactId>WorldChannels</artifactId>
-  <version>0.142-SNAPSHOT</version>
+  <version>0.143-SNAPSHOT</version>
   <name>WorldChannels</name>
   <description>Multi-directional, world-based chat channels.</description>
   <scm>
@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.3.1-R0.1-SNAPSHOT</version>
+			<version>1.3.1-R1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
