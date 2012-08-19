@@ -126,7 +126,9 @@ public class WChatListener implements Listener{
       if(channel.includeWorldPlayers()){
          // Add people of the original world
          final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
-         playerList.addAll(player.getWorld().getPlayers());
+         synchronized (player.getWorld().getPlayers()){
+            playerList.addAll(player.getWorld().getPlayers());
+         }
          receivers.addAll(playerList);
       }
       
