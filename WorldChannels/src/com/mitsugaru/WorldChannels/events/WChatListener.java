@@ -58,7 +58,9 @@ public class WChatListener implements Listener{
       if(config.includeLocalPlayers()){
          // Add people of the original world
          final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
-         playerList.addAll(player.getWorld().getPlayers());
+         synchronized (player.getWorld().getPlayers()){
+            playerList.addAll(player.getWorld().getPlayers());
+         }
          receivers.addAll(playerList);
       }
       // Grab list
@@ -72,16 +74,17 @@ public class WChatListener implements Listener{
                continue;
             }
             final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
-            playerList.addAll(player.getWorld().getPlayers());
+            synchronized (world.getPlayers()){
+               playerList.addAll(world.getPlayers());
+            }
             receivers.addAll(playerList);
          }
       }
       // Check if we're going to use local
       if(config.useLocal()){
          final CopyOnWriteArrayList<Entity> entityList = new CopyOnWriteArrayList<Entity>();
-         entityList.addAll(player.getNearbyEntities(
-               config.getLocalRadius(), config.getLocalRadius(),
-               config.getLocalRadius()));
+         entityList.addAll(player.getNearbyEntities(config.getLocalRadius(),
+               config.getLocalRadius(), config.getLocalRadius()));
          for(Entity entity : entityList){
             if(entity instanceof Player){
                receivers.add((Player) entity);
@@ -126,13 +129,11 @@ public class WChatListener implements Listener{
          group = plugin.getChat().getPlayerGroups(player)[0];
       }catch(ArrayIndexOutOfBoundsException a){
          // IGNORE
-      }
-      catch(NullPointerException npe)
-      {
+      }catch(NullPointerException npe){
          group = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve group name!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve group name!");
          }
       }
       info.put(Field.GROUP, group);
@@ -141,9 +142,9 @@ public class WChatListener implements Listener{
          prefix = plugin.getChat().getPlayerPrefix(worldName, player.getName());
       }catch(NullPointerException npe){
          prefix = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve prefix!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve prefix!");
          }
       }
       info.put(Field.PREFIX, prefix);
@@ -152,9 +153,9 @@ public class WChatListener implements Listener{
          suffix = plugin.getChat().getPlayerSuffix(worldName, player.getName());
       }catch(NullPointerException npe){
          suffix = "";
-         if(configHandler.debugVault)
-         {
-            plugin.getLogger().warning("Vault threw NPE... Could not retrieve suffix!");
+         if(configHandler.debugVault){
+            plugin.getLogger().warning(
+                  "Vault threw NPE... Could not retrieve suffix!");
          }
       }
       info.put(Field.SUFFIX, suffix);
