@@ -8,6 +8,10 @@
   <scm>
 		<url>https://github.com/Mitsugaru/WorldChannels.git</url>
 	</scm>
+	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <site.base.url>http://repo.dakanilabs.com/content/repositories</site.base.url>
+    </properties>
 	<reporting>
 		<plugins>
 			<plugin>
@@ -101,5 +105,37 @@
 			<id>Bukkit</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
+		<repository>
+            <id>release</id>
+            <name>Release Repository</name>
+            <url>${site.base.url}/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>Snapshot Repository</name>
+            <url>${site.base.url}/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 	</repositories>
+	<distributionManagement>
+        <repository>
+            <id>internal</id>
+            <url>${site.base.url}/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>${site.base.url}/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
