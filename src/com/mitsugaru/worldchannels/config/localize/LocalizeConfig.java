@@ -21,9 +21,6 @@ public class LocalizeConfig extends WCModule {
     private File file;
     private YamlConfiguration config;
     private final Map<LocalString, String> values = new EnumMap<LocalString, String>(LocalString.class);
-    public static String permissionDeny, unknown, helpHelp, helpAdminReload,
-            helpVersion, reloadConfig, helpShout, helpObserve, observerOn,
-            observerOff, noConsole, missingParam;
     
     public LocalizeConfig(WorldChannels plugin) {
         super(plugin);
@@ -92,33 +89,33 @@ public class LocalizeConfig extends WCModule {
         /**
          * Messages
          */
-        permissionDeny = config.getString("message.noPermission",
-                "&c%tag Lack permission: %extra");
-        reloadConfig = config.getString("message.reloadConfig",
-                "&a%tag &fConfig reloaded.");
-        observerOn = config.getString("message.observer.on",
-                "&a%tag Observer mode on");
-        observerOff = config.getString("message.observer.off",
-                "&a%tag Observer mode off");
-        noConsole = config.getString("message.noConsole",
-                "&a%tag Cannot use this command as console");
-        missingParam = config.getString("message.missingParam",
-                "&a%tag Missing %extra parameter");
-        unknown = config.getString("message.unknown",
-                "&c%tag Unknown %reason '&6%extra&c'");
+        values.put(LocalString.PERMISSION_DENY, config.getString("message.noPermission",
+                "&c%tag Lack permission: %extra"));
+        values.put(LocalString.RELOAD_CONFIG, config.getString("message.reloadConfig",
+                "&a%tag &fConfig reloaded."));
+        values.put(LocalString.OBSERVER_ON,config.getString("message.observer.on",
+                "&a%tag Observer mode on"));
+        values.put(LocalString.OBSERVER_OFF, config.getString("message.observer.off",
+                "&a%tag Observer mode off"));
+        values.put(LocalString.NO_CONSOLE,config.getString("message.noConsole",
+                "&a%tag Cannot use this command as console"));
+        values.put(LocalString.MISSING_PARAM, config.getString("message.missingParam",
+                "&a%tag Missing %extra parameter"));
+        values.put(LocalString.UNKNOWN, config.getString("message.unknown",
+                "&c%tag Unknown %reason '&6%extra&c'"));
         /**
          * help
          */
-        helpShout = config.getString("help.shout",
-                "&a/wc shout <message...>&e : Shout message");
-        helpHelp = config.getString("help.help",
-                "&a/wc help&e : Show help menu");
-        helpObserve = config.getString("help.observe",
-                "&a/wc observe &e: Toggle observe mode");
-        helpAdminReload = config.getString("help.admin.reload",
-                "&a/wc reload&e : Reload all config files");
-        helpVersion = config.getString("help.version",
-                "&a/wc version&e : Show version and config");
+        values.put(LocalString.HELP_SHOUT, config.getString("help.shout",
+                "&a/wc shout <message...>&e : Shout message"));
+        values.put(LocalString.HELP_HELP, config.getString("help.help",
+                "&a/wc help&e : Show help menu"));
+        values.put(LocalString.HELP_OBSERVE, config.getString("help.observe",
+                "&a/wc observe &e: Toggle observe mode"));
+        values.put(LocalString.HELP_ADMIN_RELOAD, config.getString("help.admin.reload",
+                "&a/wc reload&e : Reload all config files"));
+        values.put(LocalString.HELP_VERSION, config.getString("help.version",
+                "&a/wc version&e : Show version and config"));
     }
     
     public String getMessage(LocalString target) {
