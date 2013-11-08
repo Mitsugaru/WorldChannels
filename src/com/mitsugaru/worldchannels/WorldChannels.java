@@ -38,6 +38,7 @@ public class WorldChannels extends JavaPlugin {
         // Initialize modules
         registerModule(ConfigHandler.class, new ConfigHandler(this));
         registerModule(LocalizeConfig.class, new LocalizeConfig(this));
+
         // Grab Chat class from Vault
         final RegisteredServiceProvider<Chat> chatProvider = this.getServer()
                 .getServicesManager().getRegistration(Chat.class);
@@ -51,14 +52,18 @@ public class WorldChannels extends JavaPlugin {
                             "Vault's Chat class not found! Will not be able to populate group/prefix/suffix entries!");
             chat = null;
         }
-        //Setup localizer util class
+
+        // Setup localizer util class
         Localizer.setPlugin(this);
+
         // Setup commander
         getCommand("wc").setExecutor(new Commander(this));
+
         // Setup listeners
         final PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new WChatListener(this), this);
         pm.registerEvents(new WCPlayerListener(this), this);
+
         // Setup tasks
         this.getServer()
                 .getScheduler()
@@ -80,60 +85,60 @@ public class WorldChannels extends JavaPlugin {
     public static String colorizeText(String string) {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
-    
+
     /**
      * Register a CCModule to the API.
      * 
      * @param clazz
-     *           - Class of the instance.
+     *            - Class of the instance.
      * @param module
-     *           - Module instance.
+     *            - Module instance.
      * @throws IllegalArgumentException
-     *            - Thrown if an argument is null.
+     *             - Thrown if an argument is null.
      */
     public <T extends WCModule> void registerModule(Class<T> clazz, T module) {
-       // Check arguments.
-       if(clazz == null) {
-          throw new IllegalArgumentException("Class cannot be null");
-       } else if(module == null) {
-          throw new IllegalArgumentException("Module cannot be null");
-       }
-       // Add module.
-       modules.put(clazz, module);
-       // Tell module to start.
-       module.starting();
+        // Check arguments.
+        if(clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        } else if(module == null) {
+            throw new IllegalArgumentException("Module cannot be null");
+        }
+        // Add module.
+        modules.put(clazz, module);
+        // Tell module to start.
+        module.starting();
     }
 
     /**
      * Unregister a CCModule from the API.
      * 
      * @param clazz
-     *           - Class of the instance.
+     *            - Class of the instance.
      * @return Module that was removed from the API. Returns null if no instance
      *         of the module is registered with the API.
      */
     public <T extends WCModule> T deregisterModuleForClass(Class<T> clazz) {
-       // Check arguments.
-       if(clazz == null) {
-          throw new IllegalArgumentException("Class cannot be null");
-       }
-       // Grab module and tell it its closing.
-       T module = clazz.cast(modules.get(clazz));
-       if(module != null) {
-          module.closing();
-       }
-       return module;
+        // Check arguments.
+        if(clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        }
+        // Grab module and tell it its closing.
+        T module = clazz.cast(modules.get(clazz));
+        if(module != null) {
+            module.closing();
+        }
+        return module;
     }
 
     /**
      * Retrieve a registered CCModule.
      * 
      * @param clazz
-     *           - Class identifier.
+     *            - Class identifier.
      * @return CCModule instance. Returns null is an instance of the given class
      *         has not been registered with the API.
      */
     public <T extends WCModule> T getModuleForClass(Class<T> clazz) {
-       return clazz.cast(modules.get(clazz));
+        return clazz.cast(modules.get(clazz));
     }
 }
