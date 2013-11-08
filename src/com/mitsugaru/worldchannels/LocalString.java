@@ -1,9 +1,9 @@
-package com.mitsugaru.WorldChannels;
+package com.mitsugaru.worldchannels;
 
 import java.util.EnumMap;
 import java.util.Map.Entry;
 
-import com.mitsugaru.WorldChannels.config.LocalizeConfig;
+import com.mitsugaru.worldchannels.config.LocalizeConfig;
 
 public enum LocalString {
    PERMISSION_DENY(LocalizeConfig.permissionDeny),

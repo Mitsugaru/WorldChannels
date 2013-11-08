@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.channels;
+package com.mitsugaru.worldchannels.channels;
 
 import java.util.HashSet;
 import java.util.Set;

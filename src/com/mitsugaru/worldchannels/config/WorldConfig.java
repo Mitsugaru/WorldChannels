@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.config;
+package com.mitsugaru.worldchannels.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,9 +17,9 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.tasks.WorldAnnouncerTask;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig{
    private String worldName, formatterString, nobodyString;

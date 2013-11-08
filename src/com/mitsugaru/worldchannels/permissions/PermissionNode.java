@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.permissions;
+package com.mitsugaru.worldchannels.permissions;
 
 public enum PermissionNode
 {

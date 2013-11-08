@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.config;
+package com.mitsugaru.worldchannels.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.worldchannels.WorldChannels;
 
 public class LocalizeConfig{
    // Class variables

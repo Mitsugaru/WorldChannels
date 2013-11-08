@@ -1,11 +1,11 @@
-package com.mitsugaru.WorldChannels.permissions;
+package com.mitsugaru.worldchannels.permissions;
 
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.worldchannels.WorldChannels;
 
 /**
  * Class to handle permission node checks.

@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.tasks;
+package com.mitsugaru.worldchannels.tasks;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,9 +7,9 @@ import java.util.Map;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.config.WorldConfig;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.config.WorldConfig;
 
 public class PlayerChangedWorldTask implements Runnable{
 

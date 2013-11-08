@@ -11,6 +11,7 @@
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <site.base.url>http://repo.dakanilabs.com/content/repositories</site.base.url>
+        <project.mainclass>com.mitsugaru.worldchannels.WorldChannels</project.mainclass>
     </properties>
 	<reporting>
 		<plugins>
@@ -45,7 +46,14 @@
 					<include>plugin.yml</include>
 				</includes>
 				<directory>${basedir}</directory>
+				<filtering>true</filtering>
 			</resource>
+			<resource>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+                <directory>${basedir}</directory>
+            </resource>
 		</resources>
 		<plugins>
 		    <plugin>

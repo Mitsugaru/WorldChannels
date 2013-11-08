@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels;
+package com.mitsugaru.worldchannels;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,13 +9,14 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.config.ConfigHandler;
-import com.mitsugaru.WorldChannels.config.LocalizeConfig;
-import com.mitsugaru.WorldChannels.events.WCPlayerListener;
-import com.mitsugaru.WorldChannels.events.WChatListener;
-import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
-import com.mitsugaru.WorldChannels.tasks.PlayerChangedWorldTask;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.commands.Commander;
+import com.mitsugaru.worldchannels.config.ConfigHandler;
+import com.mitsugaru.worldchannels.config.LocalizeConfig;
+import com.mitsugaru.worldchannels.events.WCPlayerListener;
+import com.mitsugaru.worldchannels.events.WChatListener;
+import com.mitsugaru.worldchannels.permissions.PermissionHandler;
+import com.mitsugaru.worldchannels.tasks.PlayerChangedWorldTask;
 
 public class WorldChannels extends JavaPlugin{
    private Chat chat = null;

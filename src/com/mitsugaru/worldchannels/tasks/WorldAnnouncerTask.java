@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.tasks;
+package com.mitsugaru.worldchannels.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
+import com.mitsugaru.worldchannels.WorldChannels;
 
 public class WorldAnnouncerTask implements Runnable
 {

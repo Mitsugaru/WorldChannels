@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.events;
+package com.mitsugaru.worldchannels.events;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.config.WorldConfig;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.config.WorldConfig;
 
 public class WCPlayerListener implements Listener{
    private WorldChannels plugin;

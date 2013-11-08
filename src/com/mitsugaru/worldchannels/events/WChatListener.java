@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.events;
+package com.mitsugaru.worldchannels.events;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -13,14 +13,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.mitsugaru.WorldChannels.WChat;
-import com.mitsugaru.WorldChannels.WChat.Field;
-import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.config.WorldConfig;
-import com.mitsugaru.WorldChannels.config.ConfigHandler;
-import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
-import com.mitsugaru.WorldChannels.permissions.PermissionNode;
+import com.mitsugaru.worldchannels.WChat;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.WChat.Field;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.config.ConfigHandler;
+import com.mitsugaru.worldchannels.config.WorldConfig;
+import com.mitsugaru.worldchannels.permissions.PermissionHandler;
+import com.mitsugaru.worldchannels.permissions.PermissionNode;
 
 public class WChatListener implements Listener{
    private WorldChannels plugin;

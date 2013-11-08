@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels;
+package com.mitsugaru.worldchannels.commands;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -12,13 +12,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mitsugaru.WorldChannels.LocalString.Flag;
-import com.mitsugaru.WorldChannels.WChat.Field;
-import com.mitsugaru.WorldChannels.channels.Channel;
-import com.mitsugaru.WorldChannels.config.ConfigHandler;
-import com.mitsugaru.WorldChannels.config.WorldConfig;
-import com.mitsugaru.WorldChannels.permissions.PermissionHandler;
-import com.mitsugaru.WorldChannels.permissions.PermissionNode;
+import com.mitsugaru.worldchannels.LocalString;
+import com.mitsugaru.worldchannels.WChat;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.LocalString.Flag;
+import com.mitsugaru.worldchannels.WChat.Field;
+import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.config.ConfigHandler;
+import com.mitsugaru.worldchannels.config.WorldConfig;
+import com.mitsugaru.worldchannels.permissions.PermissionHandler;
+import com.mitsugaru.worldchannels.permissions.PermissionNode;
 
 public class Commander implements CommandExecutor{
    private final WorldChannels plugin;

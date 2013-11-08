@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels;
+package com.mitsugaru.worldchannels;
 
 import java.util.EnumMap;
 import java.util.Map.Entry;

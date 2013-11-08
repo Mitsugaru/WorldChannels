@@ -1,4 +1,4 @@
-package com.mitsugaru.WorldChannels.config;
+package com.mitsugaru.worldchannels.config;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
 
-import com.mitsugaru.WorldChannels.WorldChannels;
-import com.mitsugaru.WorldChannels.channels.Channel;
+import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.channels.Channel;
 
 public class ConfigHandler{
    private WorldChannels plugin;
