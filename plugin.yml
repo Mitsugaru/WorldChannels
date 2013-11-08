@@ -2,11 +2,10 @@ name: ${project.artifactId}
 description: ${project.description}
 main: ${project.mainclass}
 version: ${project.version}
-author: Mitsugaru
+authors:
+  - Mitsugaru
+  - iamcion
 depend: [Vault]
-#THIS PLUGIN WAS UPDATED BY IAMCION!
-#As this plugin has been abandoned, iamcion has brought it back to life!
-#thank him by subscribing! - www.youtube.com/user/iamcion
 
 commands:
   wc:
