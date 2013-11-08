@@ -19,7 +19,6 @@ import com.mitsugaru.worldchannels.chat.Channel;
 import com.mitsugaru.worldchannels.services.WCModule;
 
 public class ConfigHandler extends WCModule {
-    private WorldChannels plugin;
     private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
     private String formatterString, shoutFormat, nobodyString;
     private boolean formatterUse;

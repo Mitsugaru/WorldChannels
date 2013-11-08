@@ -17,7 +17,6 @@ import com.mitsugaru.worldchannels.services.WCModule;
 public class LocalizeConfig extends WCModule {
     
     // Class variables
-    private WorldChannels plugin;
     private File file;
     private YamlConfiguration config;
     private final Map<LocalString, String> values = new EnumMap<LocalString, String>(LocalString.class);
