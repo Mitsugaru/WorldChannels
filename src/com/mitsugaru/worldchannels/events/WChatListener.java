@@ -13,10 +13,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.mitsugaru.worldchannels.WChat;
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.WChat.Field;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.WChat;
+import com.mitsugaru.worldchannels.chat.Field;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 import com.mitsugaru.worldchannels.permissions.PermissionNode;
@@ -27,7 +27,7 @@ public class WChatListener implements Listener {
 
     public WChatListener(WorldChannels plugin) {
         this.plugin = plugin;
-        this.configHandler = plugin.getConfigHandler();
+        this.configHandler = plugin.getModuleForClass(ConfigHandler.class);
     }
 
     /**
@@ -110,8 +110,7 @@ public class WChatListener implements Listener {
         // Get world name
         final String worldName = event.getPlayer().getWorld().getName();
         // Grab world specific config
-        final WorldConfig config = plugin.getConfigHandler().getWorldConfig(
-                worldName);
+        final WorldConfig config = configHandler.getWorldConfig(worldName);
 
         Channel channel = null;
         synchronized (WorldChannels.currentChannel) {
@@ -265,8 +264,7 @@ public class WChatListener implements Listener {
             }
         }
         // Check if we colorize their chat
-        if(player.hasPermission(
-                PermissionNode.COLORIZE.getNode())) {
+        if(player.hasPermission(PermissionNode.COLORIZE.getNode())) {
             event.setMessage(WorldChannels.colorizeText(event.getMessage()));
         }
     }

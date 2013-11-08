@@ -1,8 +1,9 @@
-package com.mitsugaru.worldchannels.config;
+package com.mitsugaru.worldchannels.config.localize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,26 +12,24 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.services.WCModule;
 
-public class LocalizeConfig {
+public class LocalizeConfig extends WCModule {
+    
     // Class variables
-    private static WorldChannels plugin;
-    private static File file;
-    private static YamlConfiguration config;
+    private WorldChannels plugin;
+    private File file;
+    private YamlConfiguration config;
+    private final Map<LocalString, String> values = new EnumMap<LocalString, String>(LocalString.class);
     public static String permissionDeny, unknown, helpHelp, helpAdminReload,
             helpVersion, reloadConfig, helpShout, helpObserve, observerOn,
             observerOff, noConsole, missingParam;
-
-    public static void init(WorldChannels wc) {
-        plugin = wc;
-        file = new File(plugin.getDataFolder().getAbsolutePath()
-                + "/localization.yml");
-        config = YamlConfiguration.loadConfiguration(file);
-        loadDefaults();
-        loadVariables();
+    
+    public LocalizeConfig(WorldChannels plugin) {
+        super(plugin);
     }
 
-    public static void save() {
+    public void save() {
         // Set config
         try {
             // Save the file
@@ -42,7 +41,7 @@ public class LocalizeConfig {
         }
     }
 
-    public static void reload() {
+    public void reload() {
         try {
             config.load(file);
         } catch(FileNotFoundException e) {
@@ -56,7 +55,7 @@ public class LocalizeConfig {
         loadVariables();
     }
 
-    private static void loadDefaults() {
+    private void loadDefaults() {
         // LinkedHashmap of defaults
         final Map<String, String> defaults = new LinkedHashMap<String, String>();
         // defaults for all strings
@@ -88,7 +87,7 @@ public class LocalizeConfig {
         save();
     }
 
-    private static void loadVariables() {
+    private void loadVariables() {
         // load variables
         /**
          * Messages
@@ -120,5 +119,27 @@ public class LocalizeConfig {
                 "&a/wc reload&e : Reload all config files");
         helpVersion = config.getString("help.version",
                 "&a/wc version&e : Show version and config");
+    }
+    
+    public String getMessage(LocalString target) {
+        String out = values.get(target);
+        if(out == null) {
+            out = "";
+        }
+        return out;
+    }
+
+    @Override
+    public void starting() {
+        file = new File(plugin.getDataFolder().getAbsolutePath()
+                + "/localization.yml");
+        config = YamlConfiguration.loadConfiguration(file);
+        loadDefaults();
+        loadVariables();
+    }
+
+    @Override
+    public void closing() {
+        save();
     }
 }

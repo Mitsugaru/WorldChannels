@@ -1,7 +1,9 @@
-package com.mitsugaru.worldchannels;
+package com.mitsugaru.worldchannels.chat;
 
 import java.util.EnumMap;
 import java.util.Map.Entry;
+
+import com.mitsugaru.worldchannels.WorldChannels;
 
 public class WChat {
     private String string;
@@ -31,23 +33,5 @@ public class WChat {
         }
         return out;
     }
-
-    public enum Field {
-        NAME("%name"),
-        WORLD("%world"),
-        PREFIX("%prefix"),
-        SUFFIX("%suffix"),
-        MESSAGE("%message"),
-        GROUP("%group");
-
-        private String field;
-
-        private Field(String field) {
-            this.field = field;
-        }
-
-        public String getField() {
-            return field;
-        }
-    }
+    
 }

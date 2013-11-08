@@ -1,4 +1,4 @@
-package com.mitsugaru.worldchannels.channels;
+package com.mitsugaru.worldchannels.chat;
 
 import java.util.HashSet;
 import java.util.Set;

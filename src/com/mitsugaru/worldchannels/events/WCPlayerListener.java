@@ -10,7 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 
 public class WCPlayerListener implements Listener {
@@ -24,8 +25,9 @@ public class WCPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Send player to default channel
         try {
-            final WorldConfig config = plugin.getConfigHandler()
-                    .getWorldConfig(event.getPlayer().getWorld().getName());
+            final WorldConfig config = plugin.getModuleForClass(
+                    ConfigHandler.class).getWorldConfig(
+                    event.getPlayer().getWorld().getName());
             synchronized (WorldChannels.currentChannel) {
                 WorldChannels.currentChannel.put(event.getPlayer().getName(),
                         config.getDefaultChannel());
@@ -50,8 +52,8 @@ public class WCPlayerListener implements Listener {
             }
             final List<World> worlds = plugin.getServer().getWorlds();
             for(World world : worlds) {
-                final WorldConfig config = plugin.getConfigHandler()
-                        .getWorldConfig(world.getName());
+                final WorldConfig config = plugin.getModuleForClass(
+                        ConfigHandler.class).getWorldConfig(world.getName());
                 for(Channel channel : config.getChannels()) {
                     channel.removeListener(event.getPlayer().getName());
                     channel.removeObserver(event.getPlayer().getName());

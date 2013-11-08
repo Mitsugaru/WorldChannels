@@ -15,9 +15,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
 
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.services.WCModule;
 
-public class ConfigHandler {
+public class ConfigHandler extends WCModule {
     private WorldChannels plugin;
     private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
     private String formatterString, shoutFormat, nobodyString;
@@ -26,10 +27,11 @@ public class ConfigHandler {
     private Map<String, Channel> globalChannels = new HashMap<String, Channel>();
 
     public ConfigHandler(WorldChannels plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
-    public void init() {
+    @Override
+    public void starting() {
         // Load defaults
         final ConfigurationSection config = plugin.getConfig();
         // LinkedHashmap of defaults
@@ -236,7 +238,7 @@ public class ConfigHandler {
                     // Other world
                     WorldConfig otherWorld;
                     try {
-                        otherWorld = plugin.getConfigHandler().getWorldConfig(
+                        otherWorld = plugin.getModuleForClass(ConfigHandler.class).getWorldConfig(
                                 split[0]);
                     } catch(IllegalArgumentException e) {
                         plugin.getLogger()
@@ -296,5 +298,11 @@ public class ConfigHandler {
 
     public Collection<Channel> getGlobalChannels() {
         return globalChannels.values();
+    }
+
+    @Override
+    public void closing() {
+        // TODO Auto-generated method stub
+        
     }
 }

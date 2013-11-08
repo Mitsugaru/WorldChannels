@@ -18,7 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
 import com.mitsugaru.worldchannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig {
@@ -277,7 +277,7 @@ public class WorldConfig {
                     // Other world
                     WorldConfig otherWorld;
                     try {
-                        otherWorld = plugin.getConfigHandler().getWorldConfig(
+                        otherWorld = plugin.getModuleForClass(ConfigHandler.class).getWorldConfig(
                                 split[0]);
                     } catch(IllegalArgumentException e) {
                         plugin.getLogger()

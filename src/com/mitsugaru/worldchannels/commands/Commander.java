@@ -12,14 +12,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mitsugaru.worldchannels.LocalString;
-import com.mitsugaru.worldchannels.WChat;
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.LocalString.Flag;
-import com.mitsugaru.worldchannels.WChat.Field;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.WChat;
+import com.mitsugaru.worldchannels.chat.Field;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
+import com.mitsugaru.worldchannels.config.localize.Flag;
+import com.mitsugaru.worldchannels.config.localize.LocalString;
+import com.mitsugaru.worldchannels.config.localize.Localizer;
 import com.mitsugaru.worldchannels.permissions.PermissionNode;
 
 public class Commander implements CommandExecutor {
@@ -33,7 +34,7 @@ public class Commander implements CommandExecutor {
 
     public Commander(WorldChannels plugin) {
         this.plugin = plugin;
-        this.configHandler = plugin.getConfigHandler();
+        this.configHandler = plugin.getModuleForClass(ConfigHandler.class);
     }
 
     @Override
@@ -47,9 +48,9 @@ public class Commander implements CommandExecutor {
             // Check if they have "karma" permission
             this.displayHelp(sender);
         } else {
-            final EnumMap<LocalString.Flag, String> info = new EnumMap<LocalString.Flag, String>(
-                    LocalString.Flag.class);
-            info.put(LocalString.Flag.TAG, WorldChannels.TAG);
+            final EnumMap<Flag, String> info = new EnumMap<Flag, String>(
+                    Flag.class);
+            info.put(Flag.TAG, WorldChannels.TAG);
             final String com = args[0].toLowerCase();
             if(com.equals("version") || com.equals("ver")) {
                 // Version and author
@@ -59,13 +60,12 @@ public class Commander implements CommandExecutor {
             } else if(com.equals("reload")) {
                 if(sender.hasPermission(PermissionNode.ADMIN.getNode())) {
                     configHandler.reloadConfigs();
-                    sender.sendMessage(LocalString.RELOAD_CONFIG
-                            .parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.RELOAD_CONFIG, info));
                 } else {
-                    info.put(LocalString.Flag.EXTRA,
-                            PermissionNode.ADMIN.getNode());
-                    sender.sendMessage(LocalString.PERMISSION_DENY
-                            .parseString(info));
+                    info.put(Flag.EXTRA, PermissionNode.ADMIN.getNode());
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.PERMISSION_DENY, info));
                 }
             } else if(com.equals("shout")) {
                 if(sender.hasPermission(PermissionNode.SHOUT.getNode())) {
@@ -104,25 +104,24 @@ public class Commander implements CommandExecutor {
                     }
                     shoutInfo.put(Field.MESSAGE, out);
                     plugin.getServer().broadcastMessage(
-                            WChat.parseString(plugin.getConfigHandler()
-                                    .getShoutFormat(), shoutInfo));
+                            WChat.parseString(configHandler.getShoutFormat(),
+                                    shoutInfo));
                 } else {
-                    info.put(LocalString.Flag.EXTRA,
-                            PermissionNode.SHOUT.getNode());
-                    sender.sendMessage(LocalString.PERMISSION_DENY
-                            .parseString(info));
+                    info.put(Flag.EXTRA, PermissionNode.SHOUT.getNode());
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.PERMISSION_DENY, info));
                 }
             } else if(com.equals("observe") || com.equals("listen")) {
                 if(sender.hasPermission(PermissionNode.OBSERVE.getNode())) {
                     if(!(sender instanceof Player)) {
-                        sender.sendMessage(LocalString.NO_CONSOLE
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.NO_CONSOLE, info));
                     }
                     if(args.length < 2) {
                         // did not specify a channel
                         info.put(Flag.EXTRA, "channel");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     } else {
                         final String wc = args[1].toLowerCase();
                         if(wc.contains(":")) {
@@ -138,18 +137,18 @@ public class Commander implements CommandExecutor {
                                 if(channel.getObservers().contains(
                                         sender.getName())) {
                                     channel.removeObserver(sender.getName());
-                                    sender.sendMessage(LocalString.OBSERVER_OFF
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.OBSERVER_OFF, info));
                                 } else {
                                     channel.addObserver(sender.getName());
-                                    sender.sendMessage(LocalString.OBSERVER_ON
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.OBSERVER_ON, info));
                                 }
                             } else {
                                 info.put(Flag.EXTRA, wc);
                                 info.put(Flag.REASON, "channel");
-                                sender.sendMessage(LocalString.UNKNOWN
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.UNKNOWN, info));
                             }
                         } else {
                             // check local world
@@ -164,12 +163,12 @@ public class Commander implements CommandExecutor {
                                 if(channel.getObservers().contains(
                                         sender.getName())) {
                                     channel.removeObserver(sender.getName());
-                                    sender.sendMessage(LocalString.OBSERVER_OFF
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.OBSERVER_OFF, info));
                                 } else {
                                     channel.addObserver(sender.getName());
-                                    sender.sendMessage(LocalString.OBSERVER_ON
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.OBSERVER_ON, info));
                                 }
                             }
                             if(!found) {
@@ -182,14 +181,18 @@ public class Commander implements CommandExecutor {
                                                 .contains(sender.getName())) {
                                             globalChannel.removeObserver(sender
                                                     .getName());
-                                            sender.sendMessage(LocalString.OBSERVER_OFF
-                                                    .parseString(info));
+                                            sender.sendMessage(Localizer
+                                                    .parseString(
+                                                            LocalString.OBSERVER_OFF,
+                                                            info));
                                             break;
                                         } else {
                                             globalChannel.addObserver(sender
                                                     .getName());
-                                            sender.sendMessage(LocalString.OBSERVER_ON
-                                                    .parseString(info));
+                                            sender.sendMessage(Localizer
+                                                    .parseString(
+                                                            LocalString.OBSERVER_ON,
+                                                            info));
                                             break;
                                         }
                                     }
@@ -198,14 +201,14 @@ public class Commander implements CommandExecutor {
                         }
                     }
                 } else {
-                    info.put(LocalString.Flag.EXTRA,
-                            PermissionNode.OBSERVE.getNode());
-                    sender.sendMessage(LocalString.PERMISSION_DENY
-                            .parseString(info));
+                    info.put(Flag.EXTRA, PermissionNode.OBSERVE.getNode());
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.PERMISSION_DENY, info));
                 }
             } else if(com.equals("list")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     String world = ((Player) sender).getWorld().getName();
                     try {
@@ -218,21 +221,24 @@ public class Commander implements CommandExecutor {
                 }
             } else if(com.equals("next")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     listChannels(sender, pageWorld.get(sender.getName()), 0,
                             info);
                 }
             } else if(com.equals("prev")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     listChannels(sender, pageWorld.get(sender.getName()), 0,
                             info);
                 }
             } else if(com.equals("join")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     try {
                         final Channel channel = parseChannel(sender, args[1]);
@@ -252,25 +258,26 @@ public class Commander implements CommandExecutor {
                             } else {
                                 info.put(Flag.EXTRA,
                                         channel.getPermissionJoin());
-                                sender.sendMessage(LocalString.PERMISSION_DENY
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.PERMISSION_DENY, info));
                             }
                         } else {
                             info.put(Flag.EXTRA, args[1]);
                             info.put(Flag.REASON, "channel");
-                            sender.sendMessage(LocalString.UNKNOWN
-                                    .parseString(info));
+                            sender.sendMessage(Localizer.parseString(
+                                    LocalString.UNKNOWN, info));
                         }
 
                     } catch(ArrayIndexOutOfBoundsException e) {
                         info.put(Flag.EXTRA, "channel");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     }
                 }
             } else if(com.equals("leave")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     try {
                         final Channel channel = parseChannel(sender, args[1]);
@@ -292,25 +299,26 @@ public class Commander implements CommandExecutor {
                             } else {
                                 info.put(Flag.EXTRA,
                                         channel.getPermissionLeave());
-                                sender.sendMessage(LocalString.PERMISSION_DENY
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.PERMISSION_DENY, info));
                             }
                         } else {
                             info.put(Flag.EXTRA, args[1]);
                             info.put(Flag.REASON, "channel");
-                            sender.sendMessage(LocalString.UNKNOWN
-                                    .parseString(info));
+                            sender.sendMessage(Localizer.parseString(
+                                    LocalString.UNKNOWN, info));
                         }
 
                     } catch(ArrayIndexOutOfBoundsException e) {
                         info.put(Flag.EXTRA, "channel");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     }
                 }
             } else if(com.equals("kick")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     try {
                         final Channel channel = parseChannel(sender, args[1]);
@@ -345,37 +353,40 @@ public class Commander implements CommandExecutor {
                                     } else {
                                         info.put(Flag.EXTRA,
                                                 channel.getPermissionKick());
-                                        sender.sendMessage(LocalString.PERMISSION_DENY
-                                                .parseString(info));
+                                        sender.sendMessage(Localizer
+                                                .parseString(
+                                                        LocalString.PERMISSION_DENY,
+                                                        info));
                                     }
                                 } else {
                                     info.put(Flag.EXTRA, args[1]);
                                     info.put(Flag.REASON, "channel");
-                                    sender.sendMessage(LocalString.UNKNOWN
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.UNKNOWN, info));
                                 }
                             } else {
                                 info.put(Flag.EXTRA, args[2]);
                                 info.put(Flag.REASON, "player");
-                                sender.sendMessage(LocalString.UNKNOWN
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.UNKNOWN, info));
                             }
                         } else {
                             info.put(Flag.EXTRA, args[2]);
                             info.put(Flag.REASON, "player");
-                            sender.sendMessage(LocalString.UNKNOWN
-                                    .parseString(info));
+                            sender.sendMessage(Localizer.parseString(
+                                    LocalString.UNKNOWN, info));
                         }
 
                     } catch(ArrayIndexOutOfBoundsException e) {
                         info.put(Flag.EXTRA, "channel name");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     }
                 }
             } else if(com.equals("mute")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     try {
                         final Channel channel = parseChannel(sender, args[1]);
@@ -401,37 +412,40 @@ public class Commander implements CommandExecutor {
                                     } else {
                                         info.put(Flag.EXTRA,
                                                 channel.getPermissionMute());
-                                        sender.sendMessage(LocalString.PERMISSION_DENY
-                                                .parseString(info));
+                                        sender.sendMessage(Localizer
+                                                .parseString(
+                                                        LocalString.PERMISSION_DENY,
+                                                        info));
                                     }
                                 } else {
                                     info.put(Flag.EXTRA, args[1]);
                                     info.put(Flag.REASON, "channel");
-                                    sender.sendMessage(LocalString.UNKNOWN
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.UNKNOWN, info));
                                 }
                             } else {
                                 info.put(Flag.EXTRA, args[2]);
                                 info.put(Flag.REASON, "player");
-                                sender.sendMessage(LocalString.UNKNOWN
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.UNKNOWN, info));
                             }
                         } else {
                             info.put(Flag.EXTRA, args[2]);
                             info.put(Flag.REASON, "player");
-                            sender.sendMessage(LocalString.UNKNOWN
-                                    .parseString(info));
+                            sender.sendMessage(Localizer.parseString(
+                                    LocalString.UNKNOWN, info));
                         }
 
                     } catch(ArrayIndexOutOfBoundsException e) {
                         info.put(Flag.EXTRA, "channel name");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     }
                 }
             } else if(com.equals("unmute")) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(LocalString.NO_CONSOLE.parseString(info));
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.NO_CONSOLE, info));
                 } else {
                     try {
                         final Channel channel = parseChannel(sender, args[1]);
@@ -459,38 +473,41 @@ public class Commander implements CommandExecutor {
                                     } else {
                                         info.put(Flag.EXTRA,
                                                 channel.getPermissionMute());
-                                        sender.sendMessage(LocalString.PERMISSION_DENY
-                                                .parseString(info));
+                                        sender.sendMessage(Localizer
+                                                .parseString(
+                                                        LocalString.PERMISSION_DENY,
+                                                        info));
                                     }
                                 } else {
                                     info.put(Flag.EXTRA, args[1]);
                                     info.put(Flag.REASON, "channel");
-                                    sender.sendMessage(LocalString.UNKNOWN
-                                            .parseString(info));
+                                    sender.sendMessage(Localizer.parseString(
+                                            LocalString.UNKNOWN, info));
                                 }
                             } else {
                                 info.put(Flag.EXTRA, args[2]);
                                 info.put(Flag.REASON, "player");
-                                sender.sendMessage(LocalString.UNKNOWN
-                                        .parseString(info));
+                                sender.sendMessage(Localizer.parseString(
+                                        LocalString.UNKNOWN, info));
                             }
                         } else {
                             info.put(Flag.EXTRA, args[2]);
                             info.put(Flag.REASON, "player");
-                            sender.sendMessage(LocalString.UNKNOWN
-                                    .parseString(info));
+                            sender.sendMessage(Localizer.parseString(
+                                    LocalString.UNKNOWN, info));
                         }
 
                     } catch(ArrayIndexOutOfBoundsException e) {
                         info.put(Flag.EXTRA, "channel name");
-                        sender.sendMessage(LocalString.MISSING_PARAM
-                                .parseString(info));
+                        sender.sendMessage(Localizer.parseString(
+                                LocalString.MISSING_PARAM, info));
                     }
                 }
             } else {
-                info.put(LocalString.Flag.EXTRA, com);
+                info.put(Flag.EXTRA, com);
                 info.put(Flag.REASON, "command");
-                sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+                sender.sendMessage(Localizer.parseString(LocalString.UNKNOWN,
+                        info));
             }
         }
         if(configHandler.debugTime) {
@@ -549,21 +566,25 @@ public class Commander implements CommandExecutor {
     private void displayHelp(CommandSender sender) {
         sender.sendMessage(ChatColor.BLUE + "==========" + ChatColor.GOLD
                 + "WorldChannels" + ChatColor.BLUE + "==========");
-        sender.sendMessage(LocalString.HELP_HELP.parseString(null));
+        sender.sendMessage(Localizer.parseString(LocalString.HELP_HELP, null));
         if(sender.hasPermission(PermissionNode.ADMIN.getNode())) {
-            sender.sendMessage(LocalString.HELP_ADMIN_RELOAD.parseString(null));
+            sender.sendMessage(Localizer.parseString(
+                    LocalString.HELP_ADMIN_RELOAD, null));
         }
         if(sender.hasPermission(PermissionNode.SHOUT.getNode())) {
-            sender.sendMessage(LocalString.HELP_SHOUT.parseString(null));
+            sender.sendMessage(Localizer.parseString(LocalString.HELP_SHOUT,
+                    null));
         }
         if(sender.hasPermission(PermissionNode.OBSERVE.getNode())) {
-            sender.sendMessage(LocalString.HELP_OBSERVE.parseString(null));
+            sender.sendMessage(Localizer.parseString(LocalString.HELP_OBSERVE,
+                    null));
         }
-        sender.sendMessage(LocalString.HELP_VERSION.parseString(null));
+        sender.sendMessage(Localizer
+                .parseString(LocalString.HELP_VERSION, null));
     }
 
     private void listChannels(CommandSender sender, String world,
-            int pageAdjust, EnumMap<LocalString.Flag, String> info) {
+            int pageAdjust, EnumMap<Flag, String> info) {
         if(!page.containsKey(sender.getName())) {
             page.put(sender.getName(), 0);
         } else if(pageAdjust != 0) {
@@ -577,7 +598,7 @@ public class Commander implements CommandExecutor {
             // Ignore
             info.put(Flag.EXTRA, world);
             info.put(Flag.REASON, "world");
-            sender.sendMessage(LocalString.UNKNOWN.parseString(info));
+            sender.sendMessage(Localizer.parseString(LocalString.UNKNOWN, info));
         }
         if(hold.isEmpty()) {
             // notify player that there are no available channels... somehow.

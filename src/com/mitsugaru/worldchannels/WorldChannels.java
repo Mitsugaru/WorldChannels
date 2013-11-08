@@ -1,5 +1,7 @@
 package com.mitsugaru.worldchannels;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.milkbowl.vault.chat.Chat;
@@ -9,29 +11,32 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
 import com.mitsugaru.worldchannels.commands.Commander;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
-import com.mitsugaru.worldchannels.config.LocalizeConfig;
+import com.mitsugaru.worldchannels.config.localize.LocalizeConfig;
 import com.mitsugaru.worldchannels.events.WCPlayerListener;
 import com.mitsugaru.worldchannels.events.WChatListener;
+import com.mitsugaru.worldchannels.services.WCModule;
 import com.mitsugaru.worldchannels.tasks.PlayerChangedWorldTask;
 
 public class WorldChannels extends JavaPlugin {
     private Chat chat = null;
     public static final String TAG = "[WorldChannels]";
-    private ConfigHandler configHandler;
     public static final ConcurrentHashMap<String, Channel> currentChannel = new ConcurrentHashMap<String, Channel>();
+    /**
+     * Modules.
+     */
+    private final Map<Class<? extends WCModule>, WCModule> modules = new HashMap<Class<? extends WCModule>, WCModule>();
 
     /**
      * Method that is called when plugin is enabled
      */
     @Override
     public void onEnable() {
-        // Initialize configs
-        configHandler = new ConfigHandler(this);
-        configHandler.init();
-        LocalizeConfig.init(this);
+        // Initialize modules
+        registerModule(ConfigHandler.class, new ConfigHandler(this));
+        registerModule(LocalizeConfig.class, new LocalizeConfig(this));
         // Grab Chat class from Vault
         final RegisteredServiceProvider<Chat> chatProvider = this.getServer()
                 .getServicesManager().getRegistration(Chat.class);
@@ -58,10 +63,6 @@ public class WorldChannels extends JavaPlugin {
                         new PlayerChangedWorldTask(this), 100, 100);
     }
 
-    public ConfigHandler getConfigHandler() {
-        return configHandler;
-    }
-
     public Chat getChat() {
         return chat;
     }
@@ -75,5 +76,61 @@ public class WorldChannels extends JavaPlugin {
      */
     public static String colorizeText(String string) {
         return ChatColor.translateAlternateColorCodes('&', string);
+    }
+    
+    /**
+     * Register a CCModule to the API.
+     * 
+     * @param clazz
+     *           - Class of the instance.
+     * @param module
+     *           - Module instance.
+     * @throws IllegalArgumentException
+     *            - Thrown if an argument is null.
+     */
+    public <T extends WCModule> void registerModule(Class<T> clazz, T module) {
+       // Check arguments.
+       if(clazz == null) {
+          throw new IllegalArgumentException("Class cannot be null");
+       } else if(module == null) {
+          throw new IllegalArgumentException("Module cannot be null");
+       }
+       // Add module.
+       modules.put(clazz, module);
+       // Tell module to start.
+       module.starting();
+    }
+
+    /**
+     * Unregister a CCModule from the API.
+     * 
+     * @param clazz
+     *           - Class of the instance.
+     * @return Module that was removed from the API. Returns null if no instance
+     *         of the module is registered with the API.
+     */
+    public <T extends WCModule> T deregisterModuleForClass(Class<T> clazz) {
+       // Check arguments.
+       if(clazz == null) {
+          throw new IllegalArgumentException("Class cannot be null");
+       }
+       // Grab module and tell it its closing.
+       T module = clazz.cast(modules.get(clazz));
+       if(module != null) {
+          module.closing();
+       }
+       return module;
+    }
+
+    /**
+     * Retrieve a registered CCModule.
+     * 
+     * @param clazz
+     *           - Class identifier.
+     * @return CCModule instance. Returns null is an instance of the given class
+     *         has not been registered with the API.
+     */
+    public <T extends WCModule> T getModuleForClass(Class<T> clazz) {
+       return clazz.cast(modules.get(clazz));
     }
 }

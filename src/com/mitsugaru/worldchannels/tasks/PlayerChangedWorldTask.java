@@ -8,7 +8,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
-import com.mitsugaru.worldchannels.channels.Channel;
+import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 
 public class PlayerChangedWorldTask implements Runnable {
@@ -43,7 +44,8 @@ public class PlayerChangedWorldTask implements Runnable {
                 // Remove player as listener from all channels
                 final List<World> worlds = plugin.getServer().getWorlds();
                 for(World world : worlds) {
-                    final WorldConfig conf = plugin.getConfigHandler()
+                    final WorldConfig conf = plugin.getModuleForClass(
+                            ConfigHandler.class)
                             .getWorldConfig(world.getName());
                     if(conf != null) {
                         for(Channel channel : conf.getChannels()) {
@@ -54,12 +56,14 @@ public class PlayerChangedWorldTask implements Runnable {
                 // Grab world config
                 WorldConfig conf;
                 if(entry.getValue() == null) {
-                    conf = plugin.getConfigHandler().getWorldConfig(
-                            plugin.getServer().getPlayer(entry.getKey())
-                                    .getWorld().getName());
+                    conf = plugin.getModuleForClass(ConfigHandler.class)
+                            .getWorldConfig(
+                                    plugin.getServer()
+                                            .getPlayer(entry.getKey())
+                                            .getWorld().getName());
                 } else {
-                    conf = plugin.getConfigHandler().getWorldConfig(
-                            entry.getValue());
+                    conf = plugin.getModuleForClass(ConfigHandler.class)
+                            .getWorldConfig(entry.getValue());
                 }
 
                 // Grab all autojoin channels of world and add them as a
