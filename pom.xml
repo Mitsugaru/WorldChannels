@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mitsugaru</groupId>
   <artifactId>WorldChannels</artifactId>
-  <version>0.15</version>
+  <version>0.151-SNAPSHOT</version>
   <name>WorldChannels</name>
   <description>Multi-directional, world-based chat channels.</description>
   <scm>
