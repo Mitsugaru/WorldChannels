@@ -22,8 +22,7 @@ public class ConfigHandler extends WCModule {
     private Map<String, WorldConfig> configs = new HashMap<String, WorldConfig>();
     private String formatterString, shoutFormat, nobodyString;
     private boolean formatterUse;
-    public boolean hashQuickMessage, debugTime, debugVault;
-    private Map<String, Channel> globalChannels = new HashMap<String, Channel>();
+    public boolean hashQuickMessage, debugTime, debugVault, debugChat, debugAnnouncer;
 
     public ConfigHandler(WorldChannels plugin) {
         super(plugin);
@@ -40,10 +39,11 @@ public class ConfigHandler extends WCModule {
                 "%world %group %prefix%name%suffix: %message");
         defaults.put("shout.format", "%prefix%name%suffix shouts: %message");
         defaults.put("nobody.message", "&oNo one can hear you...");
-        defaults.put("hashQuickMessage", true);
+        defaults.put("hashQuickMessage", false);
         defaults.put("debug.time", false);
         defaults.put("debug.vault", false);
-        defaults.put("version", plugin.getDescription().getVersion());
+        defaults.put("debug.chat", false);
+        defaults.put("debug.announcer", false);
         defaults.put("globalChannels", new ArrayList<String>());
         // Insert defaults into config file if they're not present
         for(final Entry<String, Object> e : defaults.entrySet()) {
@@ -51,6 +51,8 @@ public class ConfigHandler extends WCModule {
                 config.set(e.getKey(), e.getValue());
             }
         }
+        //Update version
+        config.set("version", plugin.getDescription().getVersion());
         // Save config
         plugin.saveConfig();
         // Load settings
@@ -72,8 +74,6 @@ public class ConfigHandler extends WCModule {
             final String worldName = world.getName();
             configs.put(worldName, new WorldConfig(plugin, worldName));
         }
-        loadGlobalChannels();
-        hookGlobalChannels();
         hookChannels();
     }
 
@@ -83,8 +83,6 @@ public class ConfigHandler extends WCModule {
             config.reload();
         }
         this.loadSettings(plugin.getConfig());
-        loadGlobalChannels();
-        hookGlobalChannels();
         hookChannels();
     }
 
@@ -114,6 +112,7 @@ public class ConfigHandler extends WCModule {
          */
         debugTime = config.getBoolean("debug.time", false);
         debugVault = config.getBoolean("debug.vault", false);
+        debugChat = config.getBoolean("debug.chat", false);
     }
 
     private void hookChannels() {
@@ -132,153 +131,6 @@ public class ConfigHandler extends WCModule {
         return out;
     }
 
-    private void loadGlobalChannels() {
-        globalChannels.clear();
-        ConfigurationSection section = plugin.getConfig()
-                .getConfigurationSection("globalChannels");
-        if(section == null) {
-            return;
-        }
-        for(String channelName : section.getKeys(false)) {
-            final String tag = section.getString(channelName + ".tag", "g");
-            final Channel channel = new Channel(tag, channelName, "GLOBAL");
-            channel.setGlobal(true);
-            /**
-             * get channel settings
-             */
-            // local
-            boolean localUse = section.getBoolean(channelName + ".local.use",
-                    false);
-            int localRadius = section
-                    .getInt(channelName + ".local.radius", 100);
-            if(localRadius <= 0) {
-                localRadius = 100;
-            }
-            channel.setLocal(localUse);
-            channel.setRadius(localRadius);
-            // nobody
-            boolean nobodyUse = section.getBoolean(channelName + ".nobody.use",
-                    false);
-            String nobodyString = section.getString(channelName
-                    + ".nobody.message", this.nobodyString);
-            channel.setNobody(nobodyUse);
-            channel.setNobodyString(nobodyString);
-            // Formatter
-            boolean formatterUse = section.getBoolean(channelName
-                    + ".formatter.use", this.formatterUse);
-            String formatterString = section.getString(channelName
-                    + ".formatter.format", this.formatterString);
-            channel.setFormat(formatterUse);
-            channel.setFormatterString(formatterString);
-            // Autojoin
-            boolean auto = section.getBoolean(channelName + ".autojoin", false);
-            channel.setAutoJoin(auto);
-            // world players
-            boolean worldPlayers = section.getBoolean(channelName
-                    + ".includeLocalWorldPlayers", false);
-            channel.setIncludeWorldPlayers(worldPlayers);
-            // Register permissions
-            String permissionJoin = section.getString(channelName
-                    + ".permission.join", "WorldChannels.globalchannel."
-                    + channelName + ".join");
-            String permissionLeave = section.getString(channelName
-                    + ".permission.leave", "WorldChannels.globalchannel."
-                    + channelName + ".leave");
-            String permissionKick = section.getString(channelName
-                    + ".permission.kick", "WorldChannels.globalchannel."
-                    + channelName + ".kick");
-            String permissionMute = section.getString(channelName
-                    + ".permission.mute", "WorldChannels.globalchannel."
-                    + channelName + ".mute");
-            channel.setPermissionJoin(permissionJoin);
-            channel.setPermissionLeave(permissionLeave);
-            channel.setPermissionMute(permissionMute);
-            channel.setPermissionKick(permissionKick);
-            try {
-                plugin.getServer().getPluginManager()
-                        .addPermission(new Permission(permissionJoin));
-            } catch(IllegalArgumentException e) {
-                // Ignore
-            }
-            try {
-                plugin.getServer().getPluginManager()
-                        .addPermission(new Permission(permissionLeave));
-            } catch(IllegalArgumentException e) {
-                // Ignore
-            }
-            try {
-                plugin.getServer().getPluginManager()
-                        .addPermission(new Permission(permissionMute));
-            } catch(IllegalArgumentException e) {
-                // Ignore
-            }
-            try {
-                plugin.getServer().getPluginManager()
-                        .addPermission(new Permission(permissionKick));
-            } catch(IllegalArgumentException e) {
-                // Ignore
-            }
-            // Add channel
-            globalChannels.put(channelName, channel);
-        }
-    }
-
-    private void hookGlobalChannels() {
-        for(Map.Entry<String, Channel> entry : globalChannels.entrySet()) {
-            if(!(plugin.getConfig().contains("globalChannels." + entry.getKey()
-                    + ".linkedChannels"))) {
-                continue;
-            }
-            List<String> links = plugin.getConfig().getStringList(
-                    "globalChannels." + entry.getKey() + ".linkedChannels");
-            for(String link : links) {
-                if(link.contains(":")) {
-                    final String[] split = link.split(":");
-                    // Other world
-                    WorldConfig otherWorld;
-                    try {
-                        otherWorld = plugin.getModuleForClass(ConfigHandler.class).getWorldConfig(
-                                split[0]);
-                    } catch(IllegalArgumentException e) {
-                        plugin.getLogger()
-                                .log(Level.WARNING, e.getMessage(), e);
-                        continue;
-                    }
-                    if(otherWorld != null) {
-                        final Channel otherChannel = otherWorld
-                                .getChannel(split[1]);
-                        if(otherChannel != null) {
-                            entry.getValue().addChannel(otherChannel);
-                        } else {
-                            plugin.getLogger()
-                                    .warning(
-                                            "Link channel '"
-                                                    + split[1]
-                                                    + "' of other world '"
-                                                    + split[0]
-                                                    + "' not found for global channel '"
-                                                    + entry.getKey() + "'");
-                        }
-                    } else {
-                        plugin.getLogger().warning(
-                                "Other world '" + split[0]
-                                        + "' not found for global channel '"
-                                        + entry.getKey() + "'");
-                    }
-                } else if(globalChannels.containsKey(link)) {
-                    // local world channel to hook to
-                    entry.getValue().addChannel(globalChannels.get(link));
-                } else {
-                    // Invalid entry
-                    plugin.getLogger().warning(
-                            "Invalid link channel entry '" + link
-                                    + "' for global channel '" + entry.getKey()
-                                    + "'");
-                }
-            }
-        }
-    }
-
     public boolean useFormatter() {
         return formatterUse;
     }
@@ -295,13 +147,7 @@ public class ConfigHandler extends WCModule {
         return nobodyString;
     }
 
-    public Collection<Channel> getGlobalChannels() {
-        return globalChannels.values();
-    }
-
     @Override
     public void closing() {
-        // TODO Auto-generated method stub
-        
     }
 }

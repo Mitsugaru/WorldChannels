@@ -2,10 +2,12 @@ package com.mitsugaru.worldchannels.events;
 
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.chat.WChat;
 import com.mitsugaru.worldchannels.chat.Field;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
@@ -67,15 +70,6 @@ public class WChatListener implements Listener {
                 target = channel;
             }
         }
-        // Check global channels, if not found
-        if(!ours) {
-            for(Channel channel : configHandler.getGlobalChannels()) {
-                if(channel.getTag().equalsIgnoreCase(userTag)) {
-                    ours = true;
-                    target = channel;
-                }
-            }
-        }
         if(ours) {
             event.setMessage(event.getMessage().replace(
                     event.getMessage().split(" ")[0], ""));
@@ -113,22 +107,14 @@ public class WChatListener implements Listener {
         final WorldConfig config = configHandler.getWorldConfig(worldName);
 
         Channel channel = null;
-        synchronized (WorldChannels.currentChannel) {
-            channel = WorldChannels.currentChannel.get(player.getName());
+        ChannelManager manager = plugin.getModuleForClass(ChannelManager.class);
+        if(manager.getCurrentChannelId(player.getName()) != null) {
+            channel = manager.getChannel(manager.getCurrentChannelId(player
+                    .getName()));
         }
         if(channel == null) {
             // Grab default of the world
             channel = config.getDefaultChannel();
-        }
-
-        Set<Player> receivers = new HashSet<Player>();
-        if(channel.includeWorldPlayers()) {
-            // Add people of the original world
-            final CopyOnWriteArrayList<Player> playerList = new CopyOnWriteArrayList<Player>();
-            synchronized (player.getWorld().getPlayers()) {
-                playerList.addAll(player.getWorld().getPlayers());
-            }
-            receivers.addAll(playerList);
         }
 
         handleChatEvent(event, config, channel);
@@ -136,14 +122,30 @@ public class WChatListener implements Listener {
 
     private void handleChatEvent(final AsyncPlayerChatEvent event,
             WorldConfig config, Channel channel) {
+        boolean debug = configHandler.debugChat;
+
         // Grab player
         final Player player = event.getPlayer();
+
+        if(debug) {
+            plugin.getLogger().info(
+                    player.getName() + " chat in "
+                            + player.getWorld().getName() + " for channel "
+                            + channel.getName() + ": " + event.getMessage());
+        }
+
         // Check mute
         if(channel.getMuted().contains(player.getName())) {
             player.sendMessage("You are muted for channel '"
                     + channel.getName() + "' in world '"
                     + config.getWorldName() + "'");
             event.setCancelled(true);
+            if(debug) {
+                plugin.getLogger().info(
+                        player.getName() + " muted in " + config.getWorldName()
+                                + ":" + channel.getName() + " with message "
+                                + event.getMessage());
+            }
             return;
         }
         // Get world name
@@ -165,7 +167,7 @@ public class WChatListener implements Listener {
         }
         // Check if we're going to use local
         if(channel.isLocal()) {
-            final CopyOnWriteArrayList<Entity> entityList = new CopyOnWriteArrayList<Entity>();
+            final List<Entity> entityList = new CopyOnWriteArrayList<Entity>();
             entityList.addAll(player.getNearbyEntities(channel.getRadius(),
                     channel.getRadius(), channel.getRadius()));
             for(Entity entity : entityList) {
@@ -174,6 +176,24 @@ public class WChatListener implements Listener {
                 }
             }
         }
+
+        // Add broadcast worlds
+        if(debug) {
+            plugin.getLogger().info(
+                    "Number of mirror worlds: " + config.getMirrored().size());
+        }
+        for(String mirror : config.getMirrored()) {
+            World broadcast = plugin.getServer().getWorld(mirror);
+            if(debug) {
+                plugin.getLogger().info(
+                        "Looking to mirror message to " + mirror + ": "
+                                + (broadcast != null));
+            }
+            if(broadcast != null) {
+                receivers.addAll(broadcast.getPlayers());
+            }
+        }
+
         boolean empty = false;
         if(receivers.isEmpty()) {
             empty = true;
@@ -182,6 +202,7 @@ public class WChatListener implements Listener {
         }
         // Add player to receivers by default
         receivers.add(player);
+
         // Add observers
         for(String observer : channel.getObservers()) {
             final Player playerObserver = plugin.getServer()
@@ -190,6 +211,22 @@ public class WChatListener implements Listener {
                 receivers.add(playerObserver);
             }
         }
+
+        // Add global observers
+        ChannelManager manager = plugin.getModuleForClass(ChannelManager.class);
+        for(String observer : manager.getObservers()) {
+            final Player playerObserver = plugin.getServer()
+                    .getPlayer(observer);
+            if(playerObserver != null && playerObserver.isOnline()) {
+                receivers.add(playerObserver);
+            }
+        }
+
+        if(debug) {
+            plugin.getLogger().info(
+                    "Added receiving players: " + receivers.size());
+        }
+
         // Clear recipients
         event.getRecipients().clear();
         // Add our receivers

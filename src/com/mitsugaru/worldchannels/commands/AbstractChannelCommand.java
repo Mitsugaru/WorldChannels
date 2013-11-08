@@ -26,14 +26,6 @@ public abstract class AbstractChannelCommand implements ICommand {
             final WorldConfig conf = configHandler
                     .getWorldConfig(((Player) sender).getWorld().getName());
             channel = conf.getChannel(param);
-            if(channel == null) {
-                // try and get it from global
-                for(Channel c : configHandler.getGlobalChannels()) {
-                    if(c.getName().equalsIgnoreCase(param)) {
-                        channel = c;
-                    }
-                }
-            }
         }
         return channel;
     }

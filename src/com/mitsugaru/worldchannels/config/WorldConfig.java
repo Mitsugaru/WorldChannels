@@ -19,6 +19,7 @@ import org.bukkit.permissions.Permission;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.tasks.WorldAnnouncerTask;
 
 public class WorldConfig {
@@ -32,6 +33,7 @@ public class WorldConfig {
     private List<String> announcements = new ArrayList<String>();
     private Map<String, Channel> channels = new HashMap<String, Channel>();
     private Channel defaultChannel;
+    private List<String> mirrored = new ArrayList<String>();
 
     public WorldConfig(WorldChannels plugin, String worldName) {
         this.plugin = plugin;
@@ -99,7 +101,7 @@ public class WorldConfig {
         defaults.put("nobody.use", false);
         defaults.put("nobody.message", "&oNo one can hear you...");
         defaults.put("tag", "");
-        defaults.put("channels", new ArrayList<String>());
+        defaults.put("broadcastToWorlds", new ArrayList<String>());
 
         // Add to config if missing
         for(final Entry<String, Object> e : defaults.entrySet()) {
@@ -121,6 +123,8 @@ public class WorldConfig {
         nobodyUse = config.getBoolean("nobody.use", false);
         nobodyString = config.getString("nobody.message",
                 "&oNo one can hear you...");
+        mirrored = config.getStringList("broadcastToWorlds");
+
     }
 
     private void boundsCheck() {
@@ -143,6 +147,9 @@ public class WorldConfig {
                 // specified
                 defaultChannel = channels.values().toArray(new Channel[0])[0];
             }
+            plugin.getModuleForClass(ChannelManager.class).registerChannel(
+                    defaultChannel.getWorld() + defaultChannel.getName(),
+                    defaultChannel);
         }
     }
 
@@ -161,6 +168,9 @@ public class WorldConfig {
                 .scheduleSyncRepeatingTask(plugin,
                         new WorldAnnouncerTask(worldName, announcements),
                         delay, delay);
+        if(plugin.getModuleForClass(ConfigHandler.class).debugAnnouncer) {
+            plugin.getLogger().info("Started announcer for " + worldName + ", " + announcerId);
+        }
     }
 
     private void loadChannels() {
@@ -277,8 +287,8 @@ public class WorldConfig {
                     // Other world
                     WorldConfig otherWorld;
                     try {
-                        otherWorld = plugin.getModuleForClass(ConfigHandler.class).getWorldConfig(
-                                split[0]);
+                        otherWorld = plugin.getModuleForClass(
+                                ConfigHandler.class).getWorldConfig(split[0]);
                     } catch(IllegalArgumentException e) {
                         plugin.getLogger()
                                 .log(Level.WARNING, e.getMessage(), e);
@@ -348,5 +358,9 @@ public class WorldConfig {
 
     public String getNobodyMessage() {
         return nobodyString;
+    }
+
+    public List<String> getMirrored() {
+        return mirrored;
     }
 }

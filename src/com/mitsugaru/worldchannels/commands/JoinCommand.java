@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.Flag;
 import com.mitsugaru.worldchannels.config.localize.LocalString;
@@ -31,12 +32,8 @@ public class JoinCommand extends AbstractChannelCommand {
                         plugin.getModuleForClass(ConfigHandler.class));
                 if(channel != null) {
                     if(sender.hasPermission(channel.getPermissionJoin())) {
-                        // FIXME
                         channel.addListener(sender.getName());
-                        synchronized (WorldChannels.currentChannel) {
-                            WorldChannels.currentChannel.put(sender.getName(),
-                                    channel);
-                        }
+                        plugin.getModuleForClass(ChannelManager.class).setCurrentChannel(sender.getName(), channel.getWorld() + channel.getName());
                         sender.sendMessage(ChatColor.GREEN + WorldChannels.TAG
                                 + " Joined channel '" + channel.getName() + "'");
                     } else {

@@ -29,12 +29,12 @@ public class Commander extends CommandHandler {
         ObserveCommand observe = new ObserveCommand();
         registerCommand("observe", observe);
         registerCommand("listen", observe);
-        registerCommand("list", new ListCommand());
-        registerCommand("next", new NextCommand());
-        registerCommand("prev", new PrevCommand());
-        registerCommand("join", new JoinCommand());
-        registerCommand("leave", new LeaveCommand());
-        registerCommand("kick", new KickCommand());
+        //registerCommand("list", new ListCommand());
+        //registerCommand("next", new NextCommand());
+        //registerCommand("prev", new PrevCommand());
+        //registerCommand("join", new JoinCommand());
+        //registerCommand("leave", new LeaveCommand());
+        //registerCommand("kick", new KickCommand());
         registerCommand("mute", new MuteCommand());
         registerCommand("unmute", new UnmuteCommand());
     }

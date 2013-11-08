@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import com.mitsugaru.worldchannels.WorldChannels;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.Flag;
 import com.mitsugaru.worldchannels.config.localize.LocalString;
@@ -22,6 +23,7 @@ public class ReloadCommand implements ICommand {
         final Map<Flag, String> info = new EnumMap<Flag, String>(Flag.class);
         info.put(Flag.TAG, WorldChannels.TAG);
         if(sender.hasPermission(PermissionNode.ADMIN.getNode())) {
+            plugin.getModuleForClass(ChannelManager.class).clearChannels();
             plugin.getModuleForClass(ConfigHandler.class).reloadConfigs();
             sender.sendMessage(Localizer.parseString(LocalString.RELOAD_CONFIG,
                     info));

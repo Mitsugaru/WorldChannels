@@ -35,7 +35,7 @@ public class UnmuteCommand extends AbstractChannelCommand {
                     if(target != null) {
                         if(channel != null) {
                             if(sender.hasPermission(channel
-                                    .getPermissionMute())) {
+                                    .getPermissionMute()) || channel.getPermissionMute().isEmpty()) {
                                 channel.removeMutedPlayer(target
                                         .getName());
                                 target.sendMessage(ChatColor.YELLOW

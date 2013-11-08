@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 
@@ -28,10 +29,10 @@ public class WCPlayerListener implements Listener {
             final WorldConfig config = plugin.getModuleForClass(
                     ConfigHandler.class).getWorldConfig(
                     event.getPlayer().getWorld().getName());
-            synchronized (WorldChannels.currentChannel) {
-                WorldChannels.currentChannel.put(event.getPlayer().getName(),
-                        config.getDefaultChannel());
-            }
+            plugin.getModuleForClass(ChannelManager.class).setCurrentChannel(
+                    event.getPlayer().getName(),
+                    config.getDefaultChannel().getWorld()
+                            + config.getDefaultChannel().getName());
             for(Channel channel : config.getChannels()) {
                 if(channel.isAutoJoin()) {
                     channel.addListener(event.getPlayer().getName());
@@ -46,10 +47,7 @@ public class WCPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         if(event.getPlayer() != null) {
-            synchronized (WorldChannels.currentChannel) {
-                WorldChannels.currentChannel
-                        .remove(event.getPlayer().getName());
-            }
+            plugin.getModuleForClass(ChannelManager.class).removeCurrentChannel(event.getPlayer().getName());
             final List<World> worlds = plugin.getServer().getWorlds();
             for(World world : worlds) {
                 final WorldConfig config = plugin.getModuleForClass(

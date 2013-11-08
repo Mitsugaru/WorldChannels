@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 
@@ -39,47 +40,43 @@ public class PlayerChangedWorldTask implements Runnable {
         if(changed.isEmpty()) {
             return;
         }
-        synchronized (WorldChannels.currentChannel) {
-            for(Map.Entry<String, String> entry : changed.entrySet()) {
-                // Remove player as listener from all channels
-                final List<World> worlds = plugin.getServer().getWorlds();
-                for(World world : worlds) {
-                    final WorldConfig conf = plugin.getModuleForClass(
-                            ConfigHandler.class)
-                            .getWorldConfig(world.getName());
-                    if(conf != null) {
-                        for(Channel channel : conf.getChannels()) {
-                            channel.removeListener(entry.getKey());
-                        }
+        for(Map.Entry<String, String> entry : changed.entrySet()) {
+            // Remove player as listener from all channels
+            final List<World> worlds = plugin.getServer().getWorlds();
+            for(World world : worlds) {
+                final WorldConfig conf = plugin.getModuleForClass(
+                        ConfigHandler.class).getWorldConfig(world.getName());
+                if(conf != null) {
+                    for(Channel channel : conf.getChannels()) {
+                        channel.removeListener(entry.getKey());
                     }
                 }
-                // Grab world config
-                WorldConfig conf;
-                if(entry.getValue() == null) {
-                    conf = plugin.getModuleForClass(ConfigHandler.class)
-                            .getWorldConfig(
-                                    plugin.getServer()
-                                            .getPlayer(entry.getKey())
-                                            .getWorld().getName());
-                } else {
-                    conf = plugin.getModuleForClass(ConfigHandler.class)
-                            .getWorldConfig(entry.getValue());
-                }
-
-                // Grab all autojoin channels of world and add them as a
-                // listener
-                for(Channel channel : conf.getChannels()) {
-                    if(channel.isAutoJoin()) {
-                        channel.addListener(entry.getKey());
-                    }
-                }
-                // Grab default channel
-                final Channel channel = conf.getDefaultChannel();
-                // Set player to default channel
-                WorldChannels.currentChannel.put(entry.getKey(), channel);
-                // Set current world
-                currentWorld.put(entry.getKey(), entry.getValue());
             }
+            // Grab world config
+            WorldConfig conf;
+            if(entry.getValue() == null) {
+                conf = plugin.getModuleForClass(ConfigHandler.class)
+                        .getWorldConfig(
+                                plugin.getServer().getPlayer(entry.getKey())
+                                        .getWorld().getName());
+            } else {
+                conf = plugin.getModuleForClass(ConfigHandler.class)
+                        .getWorldConfig(entry.getValue());
+            }
+
+            // Grab all autojoin channels of world and add them as a
+            // listener
+            for(Channel channel : conf.getChannels()) {
+                if(channel.isAutoJoin()) {
+                    channel.addListener(entry.getKey());
+                }
+            }
+            // Grab default channel
+            final Channel channel = conf.getDefaultChannel();
+            // Set player to default channel
+            plugin.getModuleForClass(ChannelManager.class).setCurrentChannel(entry.getKey(), channel.getWorld() + channel.getName());
+            // Set current world
+            currentWorld.put(entry.getKey(), entry.getValue());
         }
     }
 

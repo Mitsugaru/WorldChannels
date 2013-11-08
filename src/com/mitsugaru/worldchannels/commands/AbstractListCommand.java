@@ -26,7 +26,6 @@ public abstract class AbstractListCommand implements ICommand {
             int pageAdjust, Map<Flag, String> info, ConfigHandler configHandler) {
         
         List<Channel> hold = new ArrayList<Channel>();
-        hold.addAll(configHandler.getGlobalChannels());
         try {
             hold.addAll(configHandler.getWorldConfig(world).getChannels());
         } catch(IllegalArgumentException e) {

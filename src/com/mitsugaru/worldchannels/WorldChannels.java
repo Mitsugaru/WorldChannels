@@ -2,7 +2,6 @@ package com.mitsugaru.worldchannels;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.milkbowl.vault.chat.Chat;
 
@@ -11,7 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.commands.Commander;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.LocalizeConfig;
@@ -24,7 +23,6 @@ import com.mitsugaru.worldchannels.tasks.PlayerChangedWorldTask;
 public class WorldChannels extends JavaPlugin {
     private Chat chat = null;
     public static final String TAG = "[WorldChannels]";
-    public static final ConcurrentHashMap<String, Channel> currentChannel = new ConcurrentHashMap<String, Channel>();
     /**
      * Modules.
      */
@@ -36,6 +34,7 @@ public class WorldChannels extends JavaPlugin {
     @Override
     public void onEnable() {
         // Initialize modules
+        registerModule(ChannelManager.class, new ChannelManager(this));
         registerModule(ConfigHandler.class, new ConfigHandler(this));
         registerModule(LocalizeConfig.class, new LocalizeConfig(this));
 

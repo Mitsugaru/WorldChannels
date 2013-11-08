@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.Flag;
 import com.mitsugaru.worldchannels.config.localize.LocalString;
@@ -38,12 +39,10 @@ public class KickCommand extends AbstractChannelCommand {
                             if(sender
                                     .hasPermission(channel.getPermissionKick())) {
                                 channel.removeListener(target.getName());
-                                synchronized (WorldChannels.currentChannel) {
-                                    if(WorldChannels.currentChannel.get(
-                                            target.getName()).equals(channel)) {
-                                        WorldChannels.currentChannel
-                                                .remove(target.getName());
-                                    }
+                                final String channelId = channel.getWorld() + channel.getName();
+                                ChannelManager manager = plugin.getModuleForClass(ChannelManager.class);
+                                if(manager.getCurrentChannelId(target.getName()).equals(channelId)) {
+                                    manager.removeCurrentChannel(target.getName());
                                 }
                                 target.sendMessage(ChatColor.RED
                                         + WorldChannels.TAG

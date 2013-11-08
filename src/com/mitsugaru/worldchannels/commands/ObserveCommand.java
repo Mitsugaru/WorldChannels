@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.WorldConfig;
 import com.mitsugaru.worldchannels.config.localize.Flag;
@@ -30,10 +31,17 @@ public class ObserveCommand implements ICommand {
                         LocalString.NO_CONSOLE, info));
             }
             if(args.length < 1) {
-                // did not specify a channel
-                info.put(Flag.EXTRA, "channel");
-                sender.sendMessage(Localizer.parseString(
-                        LocalString.MISSING_PARAM, info));
+                // did not specify a channel, toggle global
+                ChannelManager manager = plugin.getModuleForClass(ChannelManager.class);
+                if(manager.getObservers().contains(sender.getName())) {
+                    manager.getObservers().remove(sender.getName());
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.OBSERVER_OFF, info));
+                } else {
+                    manager.getObservers().add(sender.getName());
+                    sender.sendMessage(Localizer.parseString(
+                            LocalString.OBSERVER_ON, info));
+                }
             } else {
                 final String wc = args[0].toLowerCase();
                 if(wc.contains(":")) {
@@ -62,14 +70,12 @@ public class ObserveCommand implements ICommand {
                     }
                 } else {
                     // check local world
-                    boolean found = false;
                     final String worldName = ((Player) sender).getWorld()
                             .getName();
                     final WorldConfig conf = plugin.getModuleForClass(
                             ConfigHandler.class).getWorldConfig(worldName);
                     Channel channel = conf.getChannel(wc);
                     if(channel != null) {
-                        found = true;
                         if(channel.getObservers().contains(sender.getName())) {
                             channel.removeObserver(sender.getName());
                             sender.sendMessage(Localizer.parseString(
@@ -78,27 +84,6 @@ public class ObserveCommand implements ICommand {
                             channel.addObserver(sender.getName());
                             sender.sendMessage(Localizer.parseString(
                                     LocalString.OBSERVER_ON, info));
-                        }
-                    }
-                    if(!found) {
-                        // check global channels
-                        for(Channel globalChannel : plugin.getModuleForClass(
-                                ConfigHandler.class).getGlobalChannels()) {
-                            if(globalChannel.getName().equalsIgnoreCase(wc)) {
-                                if(globalChannel.getObservers().contains(
-                                        sender.getName())) {
-                                    globalChannel.removeObserver(sender
-                                            .getName());
-                                    sender.sendMessage(Localizer.parseString(
-                                            LocalString.OBSERVER_OFF, info));
-                                    break;
-                                } else {
-                                    globalChannel.addObserver(sender.getName());
-                                    sender.sendMessage(Localizer.parseString(
-                                            LocalString.OBSERVER_ON, info));
-                                    break;
-                                }
-                            }
                         }
                     }
                 }

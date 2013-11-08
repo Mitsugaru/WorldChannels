@@ -51,7 +51,7 @@ public class ShoutCommand implements ICommand {
             shoutInfo.put(Field.SUFFIX, suffix);
             final StringBuilder sb = new StringBuilder();
             String out = "";
-            for(int i = 1; i < args.length; i++) {
+            for(int i = 0; i < args.length; i++) {
                 sb.append(args[i] + " ");
                 out = sb.toString();
             }

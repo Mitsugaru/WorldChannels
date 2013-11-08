@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 import com.mitsugaru.worldchannels.chat.Channel;
+import com.mitsugaru.worldchannels.chat.ChannelManager;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.Flag;
 import com.mitsugaru.worldchannels.config.localize.LocalString;
@@ -33,12 +34,10 @@ public class LeaveCommand extends AbstractChannelCommand {
                     if(sender.hasPermission(channel.getPermissionLeave())) {
                         // FIXME
                         channel.removeListener(sender.getName());
-                        synchronized (WorldChannels.currentChannel) {
-                            if(WorldChannels.currentChannel.get(
-                                    sender.getName()).equals(channel)) {
-                                WorldChannels.currentChannel.remove(sender
-                                        .getName());
-                            }
+                        final String channelId = channel.getWorld() + channel.getName();
+                        ChannelManager manager = plugin.getModuleForClass(ChannelManager.class);
+                        if(manager.getCurrentChannelId(sender.getName()).equals(channelId)) {
+                            manager.removeCurrentChannel(sender.getName());
                         }
                         sender.sendMessage(ChatColor.GREEN + WorldChannels.TAG
                                 + " Left channel '" + channel.getName() + "'");
