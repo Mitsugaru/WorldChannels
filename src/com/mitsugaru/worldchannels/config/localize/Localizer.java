@@ -5,11 +5,11 @@ import java.util.Map.Entry;
 
 import com.mitsugaru.worldchannels.WorldChannels;
 
-public class Localizer {
+public final class Localizer {
     
     private static LocalizeConfig config;
     
-    public Localizer(WorldChannels plugin) {
+    public static void setPlugin(WorldChannels plugin) {
         config = plugin.getModuleForClass(LocalizeConfig.class);
     }
 

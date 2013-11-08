@@ -15,6 +15,7 @@ import com.mitsugaru.worldchannels.chat.Channel;
 import com.mitsugaru.worldchannels.commands.Commander;
 import com.mitsugaru.worldchannels.config.ConfigHandler;
 import com.mitsugaru.worldchannels.config.localize.LocalizeConfig;
+import com.mitsugaru.worldchannels.config.localize.Localizer;
 import com.mitsugaru.worldchannels.events.WCPlayerListener;
 import com.mitsugaru.worldchannels.events.WChatListener;
 import com.mitsugaru.worldchannels.services.WCModule;
@@ -50,6 +51,8 @@ public class WorldChannels extends JavaPlugin {
                             "Vault's Chat class not found! Will not be able to populate group/prefix/suffix entries!");
             chat = null;
         }
+        //Setup localizer util class
+        Localizer.setPlugin(this);
         // Setup commander
         getCommand("wc").setExecutor(new Commander(this));
         // Setup listeners
